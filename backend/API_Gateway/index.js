@@ -13,5 +13,5 @@ app.get('/api-gateway', (req, res)=> {
 
 
 app.listen(PORT,() => {
-    console.log(`Server started at ${PORT}`)
+    console.log(`API Gateway running on port ${PORT}`)
 })
