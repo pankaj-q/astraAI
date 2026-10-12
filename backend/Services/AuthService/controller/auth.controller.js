@@ -1,4 +1,4 @@
-import {getAuth} from 'firebase-admin'
+import {getAuth} from 'firebase-admin/auth'
 import {app} from '../config/firebase.js'
 import User from '../model/user.model.js'
 import { createConnection } from 'mongoose'
