@@ -1,5 +1,5 @@
 import { signInWithPopup } from 'firebase/auth'
-import React from 'react'
+// import React from 'react'
 import { auth, googleProvider } from './utils/firebase'
 
 function App() {
