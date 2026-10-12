@@ -1,25 +1,32 @@
-const registerUser = (async(req, res) => {
-    const {name , email, password} = req.body;
-    if(!name || !email || !password){
-        return res.status(400).json({
-            message: "name email and password are required while registering"
+import {getAuth} from 'firebase-admin'
+import {app} from '../config/firebase.js'
+import User from '../model/user.model.js'
+import { createConnection } from 'mongoose'
+export const login = (async(req, res) => {
+    try {
+        const {token} = req.body;
+        const decoded = await getAuth(app).verifyIdToken(token);
+        const user = await user.findOne({
+          firebaseUid:decoded.uid,
+        });
+        if(!user){
+            const user = await user.create({
+              firebaseUid: decoded.name,
+              firebaseUid: decoded.email,
+              firebaseUid: decoded.picture,
+            }); 
+        }
+        const sessionId = crypto.randomUUID();
+        res.cookie("session", sessionId,{
+        httpOnly: true,
+        secure: false,
+        sameSite:"strick",
+        maxAge:7*24*60*60*100
+        })
+        return res.status(200).json(user);
+    } catch (error) {
+        res.status(500).json({
+            message: `Error in login ${error}`
         })
     }
-    const user = await user.fineOne({email});
-    if(user){
-        res.status(400).json({
-            message: "user already registered with this email please login"
-        })
-    }
-    const newUser = await user.create({
-        name, email, password
-    })
-    res.status(201).json({
-        success: true,
-        message: "User registered Successfully",
-        user: user
-    })
 })
-export default {
-  registerUser
-}
