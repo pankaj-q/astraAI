@@ -12,13 +12,12 @@ function App() {
       console.log(error);
     }
   }
-    
   
   const googleLogin = async() => {
-    const token = data.user.getIdToken(token)
+    const data = await signInWithPopup(auth, googleProvider)
+    const token = await data.user.getIdToken()
     console.log(token)
     await handleLogin(token)
-    const data = await signInWithPopup(auth, googleProvider);
     console.log(data);
 }
   return (
@@ -32,6 +31,7 @@ function App() {
     </div>
   );
  
+
 }
 
 export default App
