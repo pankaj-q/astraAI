@@ -9,16 +9,20 @@ function App() {
       const {data} = await api.post('/auth/login', {token}) 
       console.log(data);
     } catch (error) {
-      console.log(error);
+      console.log(error.response?.data || error.message);
     }
   }
   
   const googleLogin = async() => {
-    const data = await signInWithPopup(auth, googleProvider)
-    const token = await data.user.getIdToken()
-    console.log(token)
-    await handleLogin(token)
-    console.log(data);
+    try {
+      const data = await signInWithPopup(auth, googleProvider)
+      const token = await data.user.getIdToken()
+      console.log(token)
+      await handleLogin(token)
+      console.log(data);
+    } catch (error) {
+      console.log(error.code || error.response?.data || error.message);
+    }
 }
   return (
     <div className="w-full h-screen bg-black flex items-center justify-center min-h-screen">
