@@ -17,7 +17,7 @@ app.use(
 
 app.use(cookieParser());
 
-app.use('/auth', proxy(process.env.AUTH_SERVICE));
+app.use("/auth", proxy(process.env.AUTH_SERVICE));
 
 
 app.get('/', (req, res)=> {
