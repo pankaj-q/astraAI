@@ -16,7 +16,7 @@ app.use(
 
 app.use(cookieParser());
 
-app.get('/api-gateway', (req, res)=> {
+app.get('/', (req, res)=> {
     res.json({
         message:"API gateway is running"
     })

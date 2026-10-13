@@ -11,7 +11,7 @@ app.use('/', router);
 
 const port = process.env.PORT
 
-app.get("/auth-service", (req, res) => {
+app.get("/", (req, res) => {
   res.json({
     message: "Auth service running on perfectly fine",
   });
