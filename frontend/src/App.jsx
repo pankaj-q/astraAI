@@ -17,7 +17,7 @@ function App() {
        console.log(data);
    }
 
-  return (̃
+  return (
     <div className="w-full h-screen bg-black flex items-center justify-center min-h-screen">
         <button
           className="w-40 h-20 bg-amber-400 flex items-center justify-center disabled:opacity-50"

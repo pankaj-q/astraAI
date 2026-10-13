@@ -2,6 +2,7 @@ import {getAuth} from 'firebase-admin/auth'
 import {app} from '../config/firebase.js'
 import User from '../model/user.model.js'
 import crypto from 'crypto'
+import redis from '../../../Shared/redis/redis.js'
 
 export const login = (async(req, res) => {
     try {
@@ -18,7 +19,16 @@ export const login = (async(req, res) => {
               avatar: decoded.picture,
             });
         }
-        const sessionId = crypto.randomUUID();
+        const sessionId = crypto.randomUUID()
+        await redis.set(`session-${sessionId}`, JSON.stringify({
+            userId:user._id,
+            name: user.name,
+            email: user.email,
+            avatar: user.avatar,
+        }))
+
+
+        
         res.cookie("session", sessionId,{
             httpOnly: true,
             secure: false,

@@ -1,8 +1,8 @@
-import Rides from 'ioredis'
-const redis = new Rides(process.env.REDIS_URL);
+import Redis from 'ioredis'
+const redis = new Redis(process.env.REDIS_URL);
 
-redis.on('connet', () => {
-    console.log("Redis connected");
+redis.on('connect',() => {
+    console.log(`Redis is connected and running on port 6379`);
 })
 
 export default redis;
