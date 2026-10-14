@@ -49,7 +49,7 @@ export const login = (async(req, res) => {
 
 export const userLogout = async(req, res) => {
     try {
-        const sessionId = req.cookie.session;
+        const sessionId = req.cookies?.session;
         await redis.del(`sessin-${sessionId}`);
         res.clearCookie("session");
         res.status(200).json({
