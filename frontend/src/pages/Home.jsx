@@ -1,11 +1,11 @@
 import { signInWithPopup } from "firebase/auth";
 import { auth, googleProvider } from "../utils/firebase.js";
-import { api } from "../utils/axios.js";
+import  api  from "../utils/axios.js";
 
 function Home() {
   const handleLogin = async (token) => {
     try {
-      const { data } = await api.post("/auth/login", { token });
+      const { data } = await api.post("/api/auth/login", { token });
       console.log(data);
     } catch (error) {
       console.error("Login failed:", error);

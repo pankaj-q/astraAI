@@ -1,9 +1,20 @@
-import Home from "./pages/home.js";
+import { useEffect } from "react";
+import Home from "./pages/Home.jsx";
+import getCurrentUser from "./features/getCurrentUser.js";
+
 function App() {
+  useEffect(() => {
+    const getUser = async () => {
+      await getCurrentUser();
+    };
+    getUser();
+  }, []);
+
   return (
     <div>
-          <Home />
+      <Home />
     </div>
   );
 }
-export default App
+
+export default App;
