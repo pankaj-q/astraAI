@@ -1,4 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
+import {userSlice} from '@reduxjs/toolkit'
 export const store = configureStore({
     name:"user",
     initialState: {
@@ -10,3 +11,5 @@ export const store = configureStore({
         }
     }
 })
+export const {setUserData} = userSlice.actions
+export default userSlice.actions 
