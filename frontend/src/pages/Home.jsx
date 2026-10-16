@@ -27,10 +27,19 @@ function Home() {
     }
   }
   return (
-    <div className ="h-scree flex bg-black text-white">
-        <h1 >Welcome to AstraAI</h1>
-        <p>Please login to continue in the app</p>
-      <button className="w-full flex items-center justify-center gap-3 rounded-xl text-sm font-medium text-black/90 bhg-white hover:bg -gray-200 transition-all duration-1s cursor-pointer" onClick={googleLogin}>Continue with Google</button>
+    <div className="h-screen flex bg-black text-white overflow-hidden">
+      if(!userData &&{" "}
+      <div className="fix inset-0 z-50 flex item-center justify-center bg-black/60 blackdrop-blur ">
+        <h1>Welcome to AstraAI</h1>
+        <p>Please login to continue with google</p>
+        <button
+          className="w-full flex items-center justify-center gap-3 rounded-xl text-sm font-medium text-black/90 bhg-white hover:bg -gray-200 transition-all duration-1s cursor-pointer"
+          onClick={googleLogin}
+        >
+          Continue with Googl
+        </button>
+      </div>{" "}
+      )
     </div>
   );
 }
