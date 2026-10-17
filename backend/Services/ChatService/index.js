@@ -8,7 +8,7 @@ const app = express();
 
 app.use(express.json())
 
-app.get('/chat-service', (Req, res) => {
+app.get('/', (Req, res) => {
     return res.status(200).json({
         message: "chat service is live now"
     })
