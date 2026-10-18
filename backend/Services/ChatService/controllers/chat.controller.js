@@ -46,7 +46,7 @@ const updateConversation = async (req, res) => {
   try {
     const { conversationId } = req.body;
     const conversation = await Conversation.findByIdAndUpdate(conversationId, {
-      title,
+        title
     });
     return res.status(201).json({
       success: true,
@@ -84,9 +84,9 @@ const saveMessage = async(req,res) => {
 
 const getMessages = async(req, res) => {
     try {
-        const {conversationId} = req.body;
+        // const {conversationId} = req.body;
         const messages = await Message.find({
-            conversationId
+            conversationId: req.params.conversationId
         }).sort({createdAt: -1})
         return res.status(200).json({
             success: true,
