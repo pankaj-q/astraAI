@@ -1,4 +1,5 @@
 import Conversation from "../models/conversation.model";
+import Message from "../models/message.model";
 
 const createConversation = async(req,res) => {
     try {
@@ -8,7 +9,9 @@ const createConversation = async(req,res) => {
             userId: userId
         })
         return res.status(200).json({
-            message: "conversation created successfully"
+            success: true,
+            message: "conversation created successfully",
+            conversation:conversation
         })
     } catch (error) {
         return res.status(500).json({
@@ -37,10 +40,30 @@ const getConverastaions = async(req, res) => {
             message: `failed to get the conversations ${error}`
         })
     }
-   
+}
 
+const saveMessage = async(req,res) => {
+   try {
+     const {conversationId, content, role} = req.body;
+     const message = await Message.create({
+         conversationId,
+         content,
+         role
+     })
+     return res.status(200).json({
+       success: true,
+       message: "messages Saved successfully",
+       message: Message
+     });
+   } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: `failed to save message ${error}`,
+    });
+   }
+    
 }
 
 export default  {
-    createConversation, getConverastaion
+    createConversation, getConverastaions, saveMessage
 }
