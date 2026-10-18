@@ -6,7 +6,7 @@ const createConversation = async(req,res) => {
         console.log("userId", userId);
         const conversation = await Conversation.create({
             userId: userId
-        }).sort({updatedAt:-1})
+        })
         return res.status(200).json({
             message: "conversation created successfully"
         })
@@ -20,20 +20,21 @@ const createConversation = async(req,res) => {
 
 } 
 
-const getConverastaion = async(req, res) => {
+const getConverastaions = async(req, res) => {
     try {
         const {userId} = req.headers["x-user-id"];
-        const conversation = await Conversation.find({
-            userId: userId
-        });
+        const conversations = await Conversation.find({
+          userId: userId,
+        }).sort({ updatedAt: -1 });
         return res.status(200).json({
-            success: true,
-            message: "conversation found successfully"
-        })
+          success: true,
+          message: "conversation found successfully",
+          conversations: conversations,
+        });
     } catch (error) {
         return res.status(500).json({
             success: false,
-            message: `failed to get the conversation ${error}`
+            message: `failed to get the conversations ${error}`
         })
     }
    
