@@ -16,5 +16,14 @@ workflow.addNode("ppt", pptAgent);
 workflow.addNode("imgae",imageAgent);
 
 workflow.addEdge("--start--", "router")
-workflow.addconditionEdge("router",)
+workflow.addConditionalEdges("router",(state) => {
+    switch (key) {
+        case value:
+            
+            break;
+    
+        default:
+            break;
+    }
+})
 
