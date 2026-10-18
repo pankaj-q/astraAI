@@ -42,6 +42,25 @@ const getConverastaions = async(req, res) => {
     }
 }
 
+const updateConversation = async (req, res) => {
+  try {
+    const { conversationId } = req.body;
+    const conversation = await Conversation.findByIdAndUpdate(conversationId, {
+      title,
+    });
+    return res.status(201).json({
+      success: true,
+      message: "Conversation updated",
+      conversation: conversation,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: `failed to upadated conversation ${error}`,
+    });
+  }
+};
+
 const saveMessage = async(req,res) => {
    try {
      const {conversationId, content, role} = req.body;
@@ -86,5 +105,6 @@ export {
     createConversation, 
     getConverastaions, 
     saveMessage, 
-    getMessages
+    getMessages,
+    updateConversation
 }
