@@ -6,7 +6,7 @@ const createConversation = async(req,res) => {
         console.log("userId", userId);
         const conversation = await Conversation.create({
             userId: userId
-        })
+        }).sort({updatedAt:-1})
         return res.status(200).json({
             message: "conversation created successfully"
         })
