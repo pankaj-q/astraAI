@@ -1,12 +1,14 @@
-import express from 'express'
+import express, { Router } from 'express'
 import dotenv from 'dotenv'
 dotenv.config();
 import connectDB from "./config/db.js";
+import router from './routes/chat.route.js';
 
 const PORT = process.env.PORT
 const app = express();
 
 app.use(express.json())
+app.use('/api/chat', Router)
 
 app.get('/', (Req, res) => {
     return res.status(200).json({

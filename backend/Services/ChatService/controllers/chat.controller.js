@@ -82,7 +82,7 @@ const getMessages = async(req, res) => {
     }
 }
 
-export default  {
+export {
     createConversation, 
     getConverastaions, 
     saveMessage, 
