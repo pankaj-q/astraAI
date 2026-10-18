@@ -8,7 +8,7 @@ const app = express()
 
 app.use(express.json())
 
-app.get('/agent-service', (req,res) => {
+app.get('/', (req,res) => {
     return res.status(200).json({
         message: "Agent service is running fine"
     })
