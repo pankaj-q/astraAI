@@ -8,7 +8,7 @@ const createConversation = async(req,res) => {
         const conversation = await Conversation.create({
             userId: userId
         })
-        return res.status(200).json({
+        return res.status(201).json({
             success: true,
             message: "conversation created successfully",
             conversation:conversation
@@ -50,7 +50,7 @@ const saveMessage = async(req,res) => {
          content,
          role
      })
-     return res.status(200).json({
+     return res.status(201).json({
        success: true,
        message: "messages Saved successfully",
        message: Message
@@ -61,9 +61,30 @@ const saveMessage = async(req,res) => {
       message: `failed to save message ${error}`,
     });
    }
-    
+}
+
+const getMessages = async(req, res) => {
+    try {
+        const {conversationId} = req.body;
+        const messages = await Message.find({
+            conversationId
+        })
+        return res.status(200).json({
+            success: true,
+            message: "messages fatch succesfully",
+            message: messages
+        })
+    } catch (error) {
+         return res.status(500).json({
+           success: false,
+           message: `failed to get messages ${error}`,
+         });
+    }
 }
 
 export default  {
-    createConversation, getConverastaions, saveMessage
+    createConversation, 
+    getConverastaions, 
+    saveMessage, 
+    getMessages
 }
