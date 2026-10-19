@@ -1,12 +1,15 @@
 import express from 'express'
 import dotenv from 'dotenv'
-import connectDB from './config/db.js';
 dotenv.config();
+import connectDB from './config/db.js';
+import router from '../AgentService/routes/agent.route.js'
+
 
 const PORT = process.env.PORT
 const app = express()
 
 app.use(express.json())
+app.use('/',router)
 
 app.get('/', (req,res) => {
     return res.status(200).json({

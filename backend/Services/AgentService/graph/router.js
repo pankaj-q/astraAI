@@ -1,4 +1,4 @@
-import { getModel } from "../config/llmModels"
+import { getModel } from "../config/llmModels.js"
 
 export const router = async(state) => {
    const llm = getModel("router");
@@ -116,5 +116,5 @@ return {
     agent:response.content
           .trim()
           .toLowerCase()
-}
+   }
 } 
