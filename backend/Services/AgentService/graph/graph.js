@@ -54,4 +54,6 @@ workflow.addEdge("pdf", "__end__")
 workflow.addEdge("ppt", "__end__")
 workflow.addEdge("image", "__end__")
 
+export const graph = workflow.compile();
+
 
