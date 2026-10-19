@@ -13,17 +13,38 @@ workflow.addNode("chat", chatAgent)
 workflow.addNode("code", codingAgent)
 workflow.addNode("pdf", pdfAgent);
 workflow.addNode("ppt", pptAgent);
-workflow.addNode("imgae",imageAgent);
+workflow.addNode("image",imageAgent);
 
 workflow.addEdge("--start--", "router")
 workflow.addConditionalEdges("router",(state) => {
-    switch (key) {
-        case value:
-            
-            break;
-    
-        default:
-            break;
+    switch (state.agent) {
+      case "chat":
+        return "chat";
+
+      case "search":
+        return "chat";
+
+      case "code":
+        return "code";
+
+      case "pdf":
+        return "pdf";
+
+      case "ppt":
+        return "ppt"; 
+
+      case "image":
+        return "image";
+
+      default:
+        return "chat"
     }
+},{
+    chat:"chat",
+    search:"search",
+    code:"code",
+    pdf:"pdf",
+    ppt:"ppt",
+    image:"image"
 })
 
