@@ -6,6 +6,7 @@ import { setUserData } from "../redux/userSlice.js";
 import SideArea from "../components/sideArea.jsx";
 
 
+
 function Home() {
   const {userData} =useSelector(state=>state.user)
   const dispatch = useDispatch();
@@ -37,6 +38,7 @@ function Home() {
   return (
     <div className="h-screen flex bg-black text-white overflow-hidden">
       <SideArea/>
+     
       {!userData && (
         <div className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-4 bg-black/60 backdrop-blur">
           <h1>Welcome to AstraAI</h1>
