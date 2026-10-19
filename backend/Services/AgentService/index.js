@@ -17,15 +17,10 @@ app.get('/', (req,res) => {
 
 connectDB()
 .then(() => {
-    console.log("Mongo DB connected Successfully")
     app.listen(PORT, () => {
       console.log(`Agent Service is running on Port ${PORT}`);
     })
 })
 .catch((error) => {
     console.log(`error connecting in MongoDB ${error}`)
-})
-
-app.listen(PORT, () => {
-    console.log(`Agent Service is running on Port ${PORT}`)
 })
