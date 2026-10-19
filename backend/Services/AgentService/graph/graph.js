@@ -8,14 +8,16 @@ import { pptAgent } from "../agents/ppt.agent.js";
 import { imageAgent } from "../agents/image.agent.js";
 
 const workflow = new StateGraph(agentState)
+
 workflow.addNode("router", router)
 workflow.addNode("chat", chatAgent)
+workflow.addNode("search",chatAgent)
 workflow.addNode("code", codingAgent)
 workflow.addNode("pdf", pdfAgent);
 workflow.addNode("ppt", pptAgent);
 workflow.addNode("image",imageAgent);
 
-workflow.addEdge("--start--", "router")
+workflow.addEdge("__start__", "router")
 workflow.addConditionalEdges("router",(state) => {
     switch (state.agent) {
       case "chat":

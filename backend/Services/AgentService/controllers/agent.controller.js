@@ -25,6 +25,4 @@ const getAgent = async(req,res)=> {
         })
     }
 } 
-export default {
-    getAgent
-}
+export default  getAgent
