@@ -1,6 +1,6 @@
 import api from "../utils/axios";
 
-export const getCoversation = async () => {
+export const getConversations = async () => {
   try {
     const { data } = await api.get("/api/chat/get-conversations");
     return data;

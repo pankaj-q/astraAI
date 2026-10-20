@@ -2,7 +2,7 @@ import { signInWithPopup } from "firebase/auth";
 import { auth, googleProvider } from "../utils/firebase.js";
 import  api  from "../utils/axios.js";
 import { useDispatch, useSelector } from "react-redux";
-import { setUserData } from "../redux/userSlice.js";
+import { setUserData } from "./redux/userSlice.js";
 import SideArea from "../components/sideArea.jsx";
 
 
