@@ -6,8 +6,15 @@ import {
   MessageSquare,
   MoreHorizontal,
 } from "lucide-react";
+import { useEffect } from "react";
 
 function SideArea() {
+    // const[Collapsed, setCollapsed] = useState(false)
+    // useEffect(() => {
+    //   const getConv = async()=> {
+    //     const data = await getConversations()
+    //   }
+    // },[])
   return (
     <aside className="flex h-screen w-[260px] flex-col border-r border-[#252A32] bg-[#0F1115] text-[#F3F4F6]">
       {/* Logo */}
