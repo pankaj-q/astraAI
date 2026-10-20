@@ -15,6 +15,7 @@ import { useDispatch } from "react-redux";
 import { setConversation } from "../pages/redux/conversationSlice";
 import { getConversations } from "../features/getCoversations.js";
 import {createConversation } from "../features/createConversation.js";
+import { addConverastion } from "../pages/redux/conversationSlice";
 
 function SideArea() {
   const dispatch = useDispatch();
@@ -32,6 +33,11 @@ function SideArea() {
 
     getConv();
   }, [dispatch]);
+
+  const handleConversatoin = async()=> {
+      const data = await createConversation()
+      dispatch(addConverastion(data));
+  }
 
   return (
     <aside
@@ -92,7 +98,7 @@ function SideArea() {
             collapsed ? "justify-center px-0" : "gap-3 px-3.5"
           }`}
           title="New chat"
-          onClick={() =>{console.log("new chat licked"); createConversation()}}
+          onClick={() =>{console.log("new chat licked"); handleConversatoin}}
         >
           <SquarePen size={17} strokeWidth={2} />
 
