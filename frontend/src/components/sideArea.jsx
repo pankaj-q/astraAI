@@ -20,12 +20,15 @@ import {
   setSelectedConversation,
 } from "../pages/redux/conversationSlice.js";
 
+
 function SideArea() {
   const dispatch = useDispatch();
+//   const [imageError, setImageError] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
    const { conversations, selectedConversation } = useSelector(
      (state) => state.conversations,
    );
+  const {userData} = useSelector((state) => state.user);
 
   useEffect(() => {
     const getConv = async () => {
@@ -181,7 +184,9 @@ function SideArea() {
               return (
                 <button
                   key={conversationId}
-                  onClick={() => dispatch(setSelectedConversation(conversation))}
+                  onClick={() =>
+                    dispatch(setSelectedConversation(conversation))
+                  }
                   title={title}
                   className={`group relative flex w-full items-center rounded-xl border transition-all duration-200 ${
                     isSelected
@@ -283,6 +288,7 @@ function SideArea() {
       {/* =====================================================
           ACCOUNT
       ====================================================== */}
+      {/* Account Section */}
       <div className={`border-t border-[#22252A] ${collapsed ? "p-2" : "p-3"}`}>
         <button
           className={`group flex w-full items-center rounded-xl transition-all duration-200 hover:bg-[#15171A] ${
@@ -291,24 +297,63 @@ function SideArea() {
           title="Account settings"
         >
           {/* Avatar */}
-          <div className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#34383E] bg-[#202329] text-[13px] font-medium text-white">
-            P{/* Online */}
+          <div className="relative flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full border border-[#34383E] bg-[#202329] text-[13px] font-medium text-white">
+            {userData?.profilePic ? (
+              <img
+                src={userData.profilePic}
+                alt={userData?.name || "User"}
+                className="h-full w-full object-cover"
+                onError={(e) => {
+                  e.currentTarget.style.display = "none";
+                  e.currentTarget.nextElementSibling.style.display = "flex";
+                }}
+              />
+            ) : null}
+
+            <span
+              className={`items-center justify-center ${
+                userData?.profilePic ? "hidden" : "flex"
+              }`}
+            >
+              {(userData?.name || userData?.username || "User")
+                .charAt(0)
+                .toUpperCase()}
+            </span>
+
+            {/* Online */}
             <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-[#090A0C] bg-[#A8ADB5]" />
           </div>
 
           {!collapsed && (
             <>
+              {/* User Details */}
               <div className="min-w-0 flex-1 text-left">
                 <p className="truncate text-[13px] font-medium text-[#E8E9EB]">
-                  Pankaj
+                  {userData?.name || userData?.username || "User"}
                 </p>
 
                 <p className="mt-0.5 text-[10px] text-[#686D75]">Free plan</p>
               </div>
 
+              {/* Logout */}
               <Settings
                 size={17}
-                className="text-[#666B73] transition-all duration-200 group-hover:rotate-45 group-hover:text-white"
+                className="cursor-pointer text-[#666B73] transition-all duration-200 group-hover:rotate-45 group-hover:text-white"
+                onClick={async (e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+
+                  try {
+                    await fetch("http://localhost:8000/api/auth/logout", {
+                      method: "GET",
+                      credentials: "include",
+                    });
+
+                    window.location.replace("/login");
+                  } catch (error) {
+                    console.error("Logout failed:", error);
+                  }
+                }}
               />
             </>
           )}
