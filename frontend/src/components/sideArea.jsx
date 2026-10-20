@@ -14,6 +14,7 @@ import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { setConversation } from "../pages/redux/conversationSlice";
 import { getConversations } from "../features/getCoversations.js";
+import {createConversation } from "../features/createConversation.js";
 
 function SideArea() {
   const dispatch = useDispatch();
@@ -87,10 +88,11 @@ function SideArea() {
       <div className={`${collapsed ? "px-2" : "px-3"}`}>
         {/* New Chat */}
         <button
-          className={`flex h-11 w-full items-center rounded-xl border border-[#30343A] bg-[#F4F4F4] text-[#090A0C] transition-all duration-200 hover:bg-white ${
+          className={`flex h-11 w-full items-center rounded-xl border border-[#30343A] bg-[#F4F4F4] text-[#090A0C] transition-all duration-200 hover:bg-[#E2E2E2] cursor-pointer ${
             collapsed ? "justify-center px-0" : "gap-3 px-3.5"
           }`}
           title="New chat"
+          onClick={() =>{console.log("new chat licked"); createConversation()}}
         >
           <SquarePen size={17} strokeWidth={2} />
 
