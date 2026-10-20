@@ -11,22 +11,28 @@ import {
 } from "lucide-react";
 
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
-import { setConversation } from "../pages/redux/conversationSlice";
+import { useDispatch, useSelector } from "react-redux";
 import { getConversations } from "../features/getCoversations.js";
 import {createConversation } from "../features/createConversation.js";
-import { addConverastion } from "../pages/redux/conversationSlice";
+import {
+  setConversation,
+  addConversation,
+  setSelectedConversation,
+} from "../pages/redux/conversationSlice.js";
 
 function SideArea() {
   const dispatch = useDispatch();
   const [collapsed, setCollapsed] = useState(false);
+   const { conversations, selectedConversation } = useSelector(
+     (state) => state.conversations,
+   );
 
   useEffect(() => {
     const getConv = async () => {
       try {
         const data = await getConversations();
         dispatch(setConversation(data));
-      } catch (error) {
+       } catch (error) {
         console.error("Failed to load conversations:", error);
       }
     };
@@ -35,8 +41,13 @@ function SideArea() {
   }, [dispatch]);
 
   const handleConversatoin = async()=> {
-      const data = await createConversation()
-      dispatch(addConverastion(data));
+     try {
+         const data = await createConversation()
+         dispatch(addConversation(data))
+         dispatch(setSelectedConversation(data))
+     } catch (error) {
+        console.error("failed to create conversation", error)
+     };
   }
 
   return (
@@ -98,7 +109,7 @@ function SideArea() {
             collapsed ? "justify-center px-0" : "gap-3 px-3.5"
           }`}
           title="New chat"
-          onClick={() =>{console.log("new chat licked"); handleConversatoin}}
+          onClick={handleConversatoin}
         >
           <SquarePen size={17} strokeWidth={2} />
 
@@ -133,8 +144,8 @@ function SideArea() {
       </div>
 
       {/* =====================================================
-          CONVERSATIONS
-      ====================================================== */}
+    CONVERSATIONS
+===================================================== */}
       <div
         className={`mt-7 flex-1 overflow-y-auto ${collapsed ? "px-2" : "px-3"}`}
       >
@@ -148,89 +159,92 @@ function SideArea() {
             <button
               className="flex h-6 w-6 items-center justify-center rounded-md text-[#666B73] transition hover:bg-[#17191C] hover:text-white"
               title="New conversation"
+              onClick={handleConversatoin}
             >
               <Plus size={14} />
             </button>
           </div>
         )}
 
-        {/* =================================================
-            RECENT CHATS
-        ================================================== */}
+        {/* CONVERSATION LIST */}
         <div className="space-y-1">
-          {/* Active Chat */}
-          <button
-            className={`group relative flex w-full items-center rounded-xl border border-[#292C31] bg-[#15171A] transition-all duration-200 hover:bg-[#1B1D20] ${
-              collapsed ? "h-11 justify-center px-0" : "min-h-[62px] gap-3 px-3"
-            }`}
-            title="Build authentication API"
-          >
-            {/* Active indicator */}
-            {!collapsed && (
-              <span className="absolute left-0 top-3 h-8 w-[2px] rounded-r-full bg-white" />
-            )}
+          {Array.isArray(conversations) && conversations.length > 0 ? (
+            conversations.map((conversation) => {
+              const conversationId = conversation._id || conversation.id;
 
-            <MessageCircle
-              size={18}
-              strokeWidth={1.7}
-              className={`shrink-0 ${collapsed ? "text-white" : "text-white"}`}
-            />
+              const isSelected =
+                (selectedConversation?._id || selectedConversation?.id) ===
+                conversationId;
 
-            {!collapsed && (
-              <>
-                <div className="min-w-0 flex-1 text-left">
-                  <p className="truncate text-[13px] font-medium text-white">
-                    Build authentication API
-                  </p>
+              const title = conversation.title?.trim() || "New chat";
 
-                  <p className="mt-1 text-[10px] text-[#696E76]">Just now</p>
-                </div>
+              return (
+                <button
+                  key={conversationId}
+                  onClick={() => dispatch(setSelectedConversation(conversation))}
+                  title={title}
+                  className={`group relative flex w-full items-center rounded-xl border transition-all duration-200 ${
+                    isSelected
+                      ? "border-[#3A3D42] bg-[#25282D] text-white"
+                      : "border-transparent hover:border-[#292C31] hover:bg-[#15171A]"
+                  } ${
+                    collapsed
+                      ? "h-11 justify-center px-0"
+                      : "min-h-[58px] gap-3 px-3"
+                  }`}
+                >
+                  {/* Selected indicator */}
+                  {isSelected && !collapsed && (
+                    <span className="absolute left-0 top-3 h-8 w-[2px] rounded-r-full bg-white" />
+                  )}
 
-                <MoreHorizontal
-                  size={16}
-                  className="shrink-0 text-[#686D75] opacity-0 transition group-hover:opacity-100 hover:text-white"
-                />
-              </>
-            )}
-          </button>
+                  {/* Icon */}
+                  <MessageCircle
+                    size={18}
+                    strokeWidth={1.6}
+                    className={`shrink-0 transition-colors ${
+                      isSelected
+                        ? "text-white"
+                        : "text-[#676C73] group-hover:text-white"
+                    }`}
+                  />
 
-          {/* Chat */}
-          <ChatItem
-            collapsed={collapsed}
-            title="Explain Redis architecture"
-            time="2h ago"
-          />
+                  {/* Title */}
+                  {!collapsed && (
+                    <>
+                      <div className="min-w-0 flex-1 text-left">
+                        <p
+                          className={`truncate text-[13px] transition-colors ${
+                            isSelected
+                              ? "font-medium text-white"
+                              : "text-[#A7ABB1] group-hover:text-white"
+                          }`}
+                        >
+                          {title}
+                        </p>
+                      </div>
 
-          <ChatItem
-            collapsed={collapsed}
-            title="LangGraph routing"
-            time="5h ago"
-          />
-        </div>
+                      {/* More button */}
+                      <MoreHorizontal
+                        size={16}
+                        className="shrink-0 text-[#62676E] opacity-0 transition group-hover:opacity-100 hover:text-white"
+                      />
+                    </>
+                  )}
+                </button>
+              );
+            })
+          ) : (
+            /* No conversations */
+            <div className="px-2 py-6 text-center">
+              <MessageCircle
+                size={18}
+                className="mx-auto mb-2 text-[#555A61]"
+              />
 
-        {/* =================================================
-            YESTERDAY
-        ================================================== */}
-        {!collapsed && (
-          <div className="mb-2 mt-8 px-2">
-            <span className="text-[10px] font-semibold tracking-[0.16em] text-[#656A72]">
-              YESTERDAY
-            </span>
-          </div>
-        )}
-
-        <div className="mt-1 space-y-1">
-          <ChatItem
-            collapsed={collapsed}
-            title="Create a Node.js server"
-            time="Yesterday"
-          />
-
-          <ChatItem
-            collapsed={collapsed}
-            title="PostgreSQL database design"
-            time="Yesterday"
-          />
+              <p className="text-[12px] text-[#686D75]">New chat</p>
+            </div>
+          )}
         </div>
       </div>
 
@@ -304,42 +318,5 @@ function SideArea() {
   );
 }
 
-/* =========================================================
-   CHAT ITEM
-========================================================= */
-
-function ChatItem({ collapsed, title, time }) {
-  return (
-    <button
-      className={`group flex w-full items-center rounded-xl text-left transition-all duration-200 hover:bg-[#15171A] ${
-        collapsed ? "h-11 justify-center px-0" : "min-h-[58px] gap-3 px-3"
-      }`}
-      title={title}
-    >
-      <MessageCircle
-        size={18}
-        strokeWidth={1.6}
-        className="shrink-0 text-[#676C73] transition-colors group-hover:text-white"
-      />
-
-      {!collapsed && (
-        <>
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-[13px] text-[#A7ABB1] transition-colors group-hover:text-white">
-              {title}
-            </p>
-
-            <p className="mt-1 text-[10px] text-[#5F646B]">{time}</p>
-          </div>
-
-          <MoreHorizontal
-            size={16}
-            className="shrink-0 text-[#62676E] opacity-0 transition group-hover:opacity-100 hover:text-white"
-          />
-        </>
-      )}
-    </button>
-  );
- }
 
 export default SideArea;
