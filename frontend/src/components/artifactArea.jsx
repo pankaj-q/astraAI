@@ -1,7 +1,7 @@
-function artifactArea() {
+function ArtifactArea() {
   return (
     <div>artifactArea</div>
   )
 }
 
-export default artifactArea
+export default ArtifactArea
