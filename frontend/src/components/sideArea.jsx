@@ -1,13 +1,14 @@
 import {
   Search,
   SquarePen,
-  Settings,
+  Coins,
   MessageCircle,
   MoreHorizontal,
   ChevronsLeft,
   Plus,
   Sparkles,
   ChevronRight,
+  LogOut,
 } from "lucide-react";
 
 import { useEffect, useState } from "react";
@@ -41,7 +42,7 @@ function SideArea() {
     };
 
     getConv();
-  }, [dispatch]);
+  }, [userData?._id]);
 
   const handleConversatoin = async()=> {
      try {
@@ -298,27 +299,36 @@ function SideArea() {
         >
           {/* Avatar */}
           <div className="relative flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full border border-[#34383E] bg-[#202329] text-[13px] font-medium text-white">
-            {userData?.profilePic ? (
+          {userData?.avatar ? (
               <img
-                src={userData.profilePic}
+                src={userData.avatar}
                 alt={userData?.name || "User"}
                 className="h-full w-full object-cover"
                 onError={(e) => {
                   e.currentTarget.style.display = "none";
-                  e.currentTarget.nextElementSibling.style.display = "flex";
+
+                  const fallback = e.currentTarget.nextElementSibling;
+                  if (fallback) {
+                    fallback.style.display = "flex";
+                  }
                 }}
               />
-            ) : null}
+            ) : (
+              <span className="flex items-center justify-center">
+                {(userData?.name || userData?.username || "User")
+                  .charAt(0)
+                  .toUpperCase()}
+              </span>
+            )}
 
-            <span
-              className={`items-center justify-center ${
-                userData?.profilePic ? "hidden" : "flex"
-              }`}
-            >
-              {(userData?.name || userData?.username || "User")
-                .charAt(0)
-                .toUpperCase()}
-            </span>
+            {/* Fallback when image URL exists but image fails */}
+            {userData?.avatar && (
+              <span className="hidden items-center justify-center">
+                {(userData?.name || userData?.username || "User")
+                  .charAt(0)
+                  .toUpperCase()}
+              </span>
+            )}
 
             {/* Online */}
             <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-[#090A0C] bg-[#A8ADB5]" />
@@ -335,8 +345,11 @@ function SideArea() {
                 <p className="mt-0.5 text-[10px] text-[#686D75]">Free plan</p>
               </div>
 
+              {/* Coins */}
+              <Coins size={10} className="cursor-pointer text-[#666B73] transition-all duration-200 group-hover:text-white" />
+
               {/* Logout */}
-              <Settings
+              <LogOut
                 size={17}
                 className="cursor-pointer text-[#666B73] transition-all duration-200 group-hover:rotate-45 group-hover:text-white"
                 onClick={async (e) => {
