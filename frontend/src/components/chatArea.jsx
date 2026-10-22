@@ -1,6 +1,7 @@
 import Navbar from "./Navbar.jsx";
 import MessageList from "./MessageList.jsx";
 import InputMessage from "./InputMessage.jsx";
+import ArtifactArea from "./ArtifactArea.jsx";
 
 import { useDispatch, useSelector } from "react-redux";
 import { setMessage } from "../pages/redux/messageSlice.js";
@@ -14,6 +15,7 @@ function ChatArea() {
   const dispatch = useDispatch();
 
   const [loading, setLoading] = useState(false);
+  const [artifact, setArtifact] = useState(null);
 
   const sendMessage = async (text) => {
     if (!text.trim() || loading) return;
@@ -52,6 +54,11 @@ function ChatArea() {
         content: data.message,
       };
 
+      // Check if response contains an artifact
+      if (data.artifact) {
+        setArtifact(data.artifact);
+      }
+
       dispatch(setMessage([...messages, userMessage, aiMessage]));
     } catch (error) {
       console.error("Message error:", error);
@@ -64,16 +71,13 @@ function ChatArea() {
     <main className="flex h-screen min-w-0 flex-1 flex-col overflow-hidden bg-[#15171A] text-[#E8E9EB]">
       <Navbar />
 
-      <div className="min-h-0 flex-1 overflow-y-auto">
+      <div className="min-h-0 flex-1 overflow-y-auto relative">
         <MessageList />
+        <ArtifactArea artifact={artifact} onClose={() => setArtifact(null)} />
       </div>
 
       <div className="shrink-0 border-t border-[#24272C] bg-[#15171A]">
         <InputMessage onSend={sendMessage} loading={loading} />
-
-        <p className="pb-3 text-center text-[11px] text-[#555A62]">
-          AstraAI can make mistakes. Check important information.
-        </p>
       </div>
     </main>
   );

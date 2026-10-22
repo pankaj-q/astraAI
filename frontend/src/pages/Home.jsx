@@ -4,8 +4,7 @@ import  api  from "../utils/axios.js";
 import { useDispatch, useSelector } from "react-redux";
 import { setUserData } from "./redux/userSlice.js";
 import SideArea from "../components/SideArea.jsx";
-import ChatArea from "../components/chatArea.jsx";
-import InputMessage from "../components/InputMessage.jsx";
+import ChatArea from "../components/ChatArea.jsx";
 
 
 
@@ -41,7 +40,6 @@ function Home() {
     <div className="h-screen flex bg-black text-white overflow-hidden">
       <SideArea/>
       <ChatArea/>
-      <InputMessage/>
      
       {!userData && (
         <div className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-4 bg-black/60 backdrop-blur">
