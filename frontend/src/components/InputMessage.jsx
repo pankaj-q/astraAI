@@ -2,7 +2,7 @@
 
 function inputMessage() {
   return (
-    <div>inputMessage</div>
+    <div></div>
   )
 }
 
