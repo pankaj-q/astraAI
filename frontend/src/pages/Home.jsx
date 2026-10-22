@@ -16,7 +16,7 @@ function Home() {
     try {
       const { data } = await api.post("/api/auth/login", { token });
       dispatch(setUserData(data.user ?? data));
-      console.log("login respnse",data);
+      console.log("login response",data);
     } catch (error) {
       console.error("Login failed:", error);
     }
