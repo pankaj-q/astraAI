@@ -2,6 +2,7 @@ import Navbar from "./Navbar.jsx";
 import MessageList from "./MessageList.jsx";
 import InputMessage from "./InputMessage.jsx";
 import ArtifactArea from "./ArtifactArea.jsx";
+import sendMessage from "../features/sendMessage.js";
 
 import { useDispatch, useSelector } from "react-redux";
 import { setMessage } from "../pages/redux/messageSlice.js";
@@ -17,7 +18,7 @@ function ChatArea() {
   const [loading, setLoading] = useState(false);
   const [artifact, setArtifact] = useState(null);
 
-  const sendMessage = async (text) => {
+  const handleSendMessage = async (text) => {
     if (!text.trim() || loading) return;
 
     setLoading(true);
@@ -31,23 +32,10 @@ function ChatArea() {
       // Show user message immediately
       dispatch(setMessage([...messages, userMessage]));
 
-      const response = await fetch("http://localhost:8000/api/chat", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({
-          conversationId: selectedConversation?._id,
-          message: text,
-        }),
+      const data = await sendMessage({
+        conversationId: selectedConversation?._id,
+        message: text,
       });
-
-      if (!response.ok) {
-        throw new Error("Failed to send message");
-      }
-
-      const data = await response.json();
 
       const aiMessage = {
         role: "assistant",
@@ -77,7 +65,7 @@ function ChatArea() {
       </div>
 
       <div className="shrink-0 border-t border-[#24272C] bg-[#15171A]">
-        <InputMessage onSend={sendMessage} loading={loading} />
+        <InputMessage onSend={handleSendMessage} loading={loading} />
       </div>
     </main>
   );
