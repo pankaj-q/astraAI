@@ -5,7 +5,7 @@ import ArtifactArea from "./ArtifactArea.jsx";
 import sendMessage from "../features/sendMessage.js";
 
 import { useDispatch, useSelector } from "react-redux";
-import { setMessage } from "../pages/redux/messageSlice.js";
+import { addMessage } from "../pages/redux/messageSlice.js";
 import { useState } from "react";
 
 function ChatArea() {
@@ -30,7 +30,7 @@ function ChatArea() {
       };
 
       // Show user message immediately
-      dispatch(setMessage([...messages, userMessage]));
+      dispatch(addMessage(userMessage));
 
       const data = await sendMessage({
         conversationId: selectedConversation?._id,
@@ -47,7 +47,7 @@ function ChatArea() {
         setArtifact(data.artifact);
       }
 
-      dispatch(setMessage([...messages, userMessage, aiMessage]));
+      dispatch(addMessage(aiMessage));
     } catch (error) {
       console.error("Message error:", error);
     } finally {
