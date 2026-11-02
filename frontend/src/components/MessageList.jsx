@@ -1,12 +1,11 @@
 import { useSelector } from "react-redux";
 import { Sparkles, MessageCircle } from "lucide-react";
+import MessageBubble from "./messageBubble.jsx";
 
 function MessageList() {
-  const { selectedConversation } = useSelector((state) => state.conversations);
-
   const { messages = [] } = useSelector((state) => state.message);
 
-  const showWelcome = messages.length === 0 || !selectedConversation;
+  const showWelcome = messages.length === 0;
 
   return (
     <div className="flex h-full min-h-0 flex-1 flex-col overflow-y-auto bg-[#15171A]">
@@ -31,23 +30,10 @@ function MessageList() {
           </div>
         </div>
       ) : (
-        <div className="mx-auto flex w-full max-w-4xl flex-col gap-6 px-4 py-8 sm:px-6">
+        <div className="mx-auto flex w-full max-w-4xl flex-col gap-4 px-4 py-8 sm:px-6">
           {messages.map((msg, index) => (
-            <div
-              key={msg._id || index}
-              className={`flex ${
-                msg.role === "user" ? "justify-end" : "justify-start"
-              }`}
-            >
-              <div
-                className={`max-w-[85%] whitespace-pre-wrap break-words rounded-2xl px-4 py-3 text-sm leading-7 ${
-                  msg.role === "user"
-                    ? "rounded-br-md bg-[#292D35] text-[#F3F4F6]"
-                    : "text-[#D1D5DB]"
-                }`}
-              >
-                {msg.content || msg.message || ""}
-              </div>
+            <div key={msg._id || index}>
+              <MessageBubble message={msg} />
             </div>
           ))}
         </div>

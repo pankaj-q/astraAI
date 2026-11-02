@@ -20,7 +20,7 @@ app.get("/", (req, res) => {
 connectDB()
 .then(() => {
     app.listen(port, () => {
-        console.log(`AuthService is running on port ${port}`)
+        console.log(`AuthService running on port ${port}`)
     });
 })
 .catch((error) => {

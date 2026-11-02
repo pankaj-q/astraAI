@@ -31,7 +31,6 @@ function ChatArea() {
 
     try {
       let conversation = selectedConversation;
-
       // Auto-create conversation if none selected
       if (!conversation?._id) {
         const conv = await createConversation();
@@ -42,7 +41,7 @@ function ChatArea() {
 
       const data = await sendMessage({
         conversationId: conversation._id,
-        message: text,
+        prompt: text,
       });
 
       const aiMessage = {

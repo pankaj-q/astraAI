@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 dotenv.config();
 import express from "express";
 import connectDB from './config/db.js';
-import router from '../AgentService/routes/agent.route.js'
+import router from './routes/agent.route.js'
 
 
 const PORT = process.env.PORT
@@ -21,7 +21,7 @@ app.get('/', (req,res) => {
 connectDB()
 .then(() => {
     app.listen(PORT, () => {
-      console.log(`Agent Service is running on Port ${PORT}`);
+      console.log(`Agent Service running on Port ${PORT}`);
     })
 })
 .catch((error) => {
