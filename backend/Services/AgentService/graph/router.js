@@ -90,9 +90,9 @@ Examples:
 
 11. Return ONLY valid JSON matching the required schema.
 
-12. Preserve the user's original request exactly in ``user_request``.
+12. Preserve the user's original request exactly in "user_request".
 
-13. ``reason`` must be short and describe why the selected agent is appropriate.
+13. "reason" must be short and describe why the selected agent is appropriate.
 
 OUTPUT FORMAT:
 

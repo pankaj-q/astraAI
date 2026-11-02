@@ -3,7 +3,14 @@ import Message from "../models/message.model.js";
 
 const createConversation = async(req,res) => {
     try {
-        const {userId} = req.headers["x-user-id"];
+        // header value is a plain string, it must NOT be destructured
+        const userId = req.headers["x-user-id"];
+        if (!userId) {
+            return res.status(401).json({
+                success: false,
+                message: "missing user id",
+            });
+        }
         console.log("userId", userId);
         const conversation = await Conversation.create({
             userId: userId
@@ -25,7 +32,13 @@ const createConversation = async(req,res) => {
 
 const getConverastaions = async(req, res) => {
     try {
-        const {userId} = req.headers["x-user-id"];
+        const userId = req.headers["x-user-id"];
+        if (!userId) {
+            return res.status(401).json({
+                success: false,
+                message: "missing user id",
+            });
+        }
         const conversations = await Conversation.find({
           userId: userId,
         }).sort({ updatedAt: -1 });
@@ -44,7 +57,13 @@ const getConverastaions = async(req, res) => {
 
 const updateConversation = async (req, res) => {
   try {
-    const { conversationId } = req.body;
+    const { conversationId, title } = req.body;
+    if (!conversationId) {
+      return res.status(400).json({
+        success: false,
+        message: "conversationId is required",
+      });
+    }
     const conversation = await Conversation.findByIdAndUpdate(conversationId, {
         title
     });
@@ -64,6 +83,12 @@ const updateConversation = async (req, res) => {
 const saveMessage = async(req,res) => {
    try {
      const {conversationId, content, role} = req.body;
+     if (!conversationId) {
+       return res.status(400).json({
+         success: false,
+         message: "conversationId is required",
+       });
+     }
      const message = await Message.create({
          conversationId,
          content,
@@ -72,7 +97,7 @@ const saveMessage = async(req,res) => {
      return res.status(201).json({
        success: true,
        message: "messages Saved successfully",
-       message: Message
+       data: message
      });
    } catch (error) {
     return res.status(500).json({

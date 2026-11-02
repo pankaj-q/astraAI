@@ -1,4 +1,4 @@
-import express, { Router } from 'express'
+import express from 'express'
 import dotenv from 'dotenv'
 dotenv.config();
 import connectDB from "./config/db.js";
@@ -8,7 +8,7 @@ const PORT = process.env.PORT
 const app = express();
 
 app.use(express.json())
-app.use('/', Router)
+app.use('/', router)
 
 app.get('/', (Req, res) => {
     return res.status(200).json({

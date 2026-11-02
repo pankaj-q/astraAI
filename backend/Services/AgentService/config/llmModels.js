@@ -15,7 +15,7 @@ const groqModel = new ChatGroq({
 //   maxRetries: 2,
 // });
 
-export const getModel = async (agent) => {
+export const getModel = (agent) => {
   switch (agent) {
     case "chat":
       return groqModel;

@@ -12,11 +12,20 @@ import api from "../utils/axios.js"
 // };
 
 export const createConversation = async () => {
-  const response = await api.get("/api/chat/create-conversation");
+  try {
+    const response = await api.get("/api/chat/create-conversation");
 
-  console.log("STATUS:", response.status);
+    console.log("STATUS:", response.status);
+    console.log("API RESPONSE:", response.data);
 
-  console.log("API RESPONSE:", response.data);
-
-  return response.data;
+    // backend responds with { success, message, conversation }
+    // we must return the conversation object itself so _id is available
+    return response.data.conversation;
+  } catch (error) {
+    console.error(
+      "CREATE CONVERSATION ERROR:",
+      error.response?.data || error.message,
+    );
+    throw error;
+  }
 };
