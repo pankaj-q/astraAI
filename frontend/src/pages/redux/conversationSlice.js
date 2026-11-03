@@ -7,7 +7,7 @@ export const conversationSlice = createSlice({
   },
   reducers: {
       setConversation:(state,action)=> {
-        state.conversations = action.payload
+        state.conversations = action.payload || [];
       },
       addConversation:(state,action)=> {
         state.conversations.unshift(action.payload)
