@@ -69,7 +69,8 @@ function messageBubble({ message }) {
             : "rounded-bl-md bg-[#1F2227] border border-[#24272C] text-[#D1D5DB]"
         }`}
       >
-        {renderContent(content)}
+        <markdown>{renderContent(content)}</markdown>
+        
       </div>
     </div>
   );

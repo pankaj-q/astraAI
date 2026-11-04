@@ -35,7 +35,7 @@ function SideArea() {
     const getConv = async () => {
       try {
         const data = await getConversations();
-        dispatch(setConversation(data));
+        dispatch(setConversation(data.conversations || []));
        } catch (error) {
         console.error("Failed to load conversations:", error);
       }
@@ -47,8 +47,14 @@ function SideArea() {
   const handleConversatoin = async()=> {
      try {
          const data = await createConversation()
-         dispatch(addConversation(data))
-         dispatch(setSelectedConversation(data))
+         const conversation = data?.conversation || data;
+
+         if(!conversation?._id && !conversation?.id){
+          console.error("Invalid conversation rturned:", data)
+          return;
+         }
+         dispatch(addConversation(conversation))
+         dispatch(setSelectedConversation(conversation))
      } catch (error) {
         console.error("failed to create conversation", error)
      };

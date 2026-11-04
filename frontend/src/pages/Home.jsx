@@ -3,8 +3,8 @@ import { auth, googleProvider } from "../utils/firebase.js";
 import  api  from "../utils/axios.js";
 import { useDispatch, useSelector } from "react-redux";
 import { setUserData } from "./redux/userSlice.js";
-import SideArea from "../components/SideArea.jsx";
-import ChatArea from "../components/ChatArea.jsx";
+import SideArea from "../components/sideArea.jsx";
+import ChatArea from "../components/chatArea.jsx";
 
 
 
