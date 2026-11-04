@@ -1,31 +1,31 @@
-const {token: firebaseToken} = req.body;
-if (!firebaseToken) {
-  res.status(400).json({
-    message: "token not found",
-  });
-  const decoded = await getAuth(app).verifyIdToken(firebaseToken);
-  const user = await User.FindOneAndUpdate(
-    { FirebaseUid: decoded.uid },
-    {
-      $set: {
-        name: decoded.name,
-        email: decoded.email,
-        profilePicture: decoded.Picture,
-      },
-      $setOnInsert: {
-        firebaseuid: decoded.uid,
-      },
-    },
-    {
-      upsert: true,
-      retrunDocument: "after",
-    },
-  )
-  const token = jwt.sign({userId: user._id}, process.env.JWT_SECRET, {expiresIn: "7d"});
-  res.cookie("token",token,{
-      httpOnly: true,
-      secure: false,
-      sameSite: "strict",
-      maxAge: "7*24*60*60*1000 "
-  })
-}
+// const {token: firebaseToken} = req.body;
+// if (!firebaseToken) {
+//   res.status(400).json({
+//     message: "token not found",
+//   });
+//   const decoded = await getAuth(app).verifyIdToken(firebaseToken);
+//   const user = await User.FindOneAndUpdate(
+//     { FirebaseUid: decoded.uid },
+//     {
+//       $set: {
+//         name: decoded.name,
+//         email: decoded.email,
+//         profilePicture: decoded.Picture,
+//       },
+//       $setOnInsert: {
+//         firebaseuid: decoded.uid,
+//       },
+//     },
+//     {
+//       upsert: true,
+//       retrunDocument: "after",
+//     },
+//   )
+//   const token = jwt.sign({userId: user._id}, process.env.JWT_SECRET, {expiresIn: "7d"});
+//   res.cookie("token",token,{
+//       httpOnly: true,
+//       secure: false,
+//       sameSite: "strict",
+//       maxAge: 7*24*60*60*1000
+//   })
+// }
