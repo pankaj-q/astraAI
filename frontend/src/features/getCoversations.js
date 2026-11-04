@@ -6,5 +6,6 @@ export const getConversations = async () => {
     return data;
   } catch (error) {
     console.log(`error fetching conversation ${error}`);
+    return {conversations: []};
   }
 };
