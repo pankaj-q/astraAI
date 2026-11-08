@@ -4,6 +4,7 @@ import { graph } from "../graph/graph.js";
 const getAgent = async (req, res) => {
   try {
     const { prompt, conversationId } = req.body;
+    await addMessage(conversationId,"user",prompt)
     console.log("Conversation ID:", conversationId);
     await axios.post(`${process.env.CHAT_SERVICE}/save-message`, {
       conversationId,
@@ -17,6 +18,7 @@ const getAgent = async (req, res) => {
     });
 
     const response = result.aiResponse;
+    await addMessage(conversationId, "user", prompt);
     await axios.post(`${process.env.CHAT_SERVICE}/save-message`, {
       conversationId,
       role: "assistant",
