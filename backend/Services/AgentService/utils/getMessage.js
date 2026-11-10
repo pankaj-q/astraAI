@@ -1,4 +1,4 @@
-import { axios } from "axios"
+import  axios  from "axios"
 export const getMessage = async (conversationId) => {
    try {
      const data = await axios.get(`${process.env.CHAT_SERVICE}/get-messages/${conversationId}`)
