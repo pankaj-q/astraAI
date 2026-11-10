@@ -126,10 +126,34 @@ const getMessages = async(req, res) => {
     }
 }
 
+const deleteConversation = async (req, res) => {
+  try {
+    const { conversationId } = req.body;
+    if (!conversationId) {
+      return res.status(400).json({
+        success: false,
+        message: "conversationId is required",
+      });
+    }
+    await Conversation.findByIdAndDelete(conversationId);
+    await Message.deleteMany({ conversationId });
+    return res.status(200).json({
+      success: true,
+      message: "conversation deleted successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: `failed to delete conversation ${error}`,
+    });
+  }
+};
+
 export {
     createConversation, 
     getConverastaions, 
     saveMessage, 
     getMessages,
-    updateConversation
+    updateConversation,
+    deleteConversation
 }

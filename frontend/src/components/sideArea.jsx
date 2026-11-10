@@ -9,16 +9,19 @@ import {
   Sparkles,
   ChevronRight,
   LogOut,
+  Trash2,
 } from "lucide-react";
 
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getConversations } from "../features/getCoversations.js";
 import {createConversation } from "../features/createConversation.js";
+import { deleteConversation } from "../features/deleteConversation.js";
 import {
   setConversation,
   addConversation,
   setSelectedConversation,
+  removeConversation,
 } from "../pages/redux/conversationSlice.js";
 
 
@@ -59,6 +62,21 @@ function SideArea() {
         console.error("failed to create conversation", error)
      };
   }
+
+  const handleDeleteConversation = async (e, conversation) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const id = conversation?._id || conversation?.id;
+    if (!id) return;
+
+    try {
+      await deleteConversation(id);
+      dispatch(removeConversation(id));
+    } catch (error) {
+      console.error("failed to delete conversation", error);
+    }
+  };
 
   return (
     <aside
@@ -235,6 +253,15 @@ function SideArea() {
                           {title}
                         </p>
                       </div>
+
+                      {/* Delete button */}
+                      <button
+                        onClick={(e) => handleDeleteConversation(e, conversation)}
+                        title="Delete conversation"
+                        className="shrink-0 text-[#62676E] opacity-0 transition group-hover:opacity-100 hover:text-red-400"
+                      >
+                        <Trash2 size={16} />
+                      </button>
 
                       {/* More button */}
                       <MoreHorizontal

@@ -14,11 +14,19 @@ export const conversationSlice = createSlice({
       },
       setSelectedConversation:(state,action)=> {
         state.selectedConversation = action.payload
+      },
+      removeConversation:(state,action)=> {
+        const id = action.payload;
+        state.conversations = state.conversations.filter((c) => (c._id || c.id) !== id);
+        if ((state.selectedConversation?._id || state.selectedConversation?.id) === id) {
+          state.selectedConversation = null;
+        }
       }
   },
 });
 export const { setConversation,
                addConversation,
-               setSelectedConversation 
+               setSelectedConversation,
+               removeConversation
             } = conversationSlice.actions;
 export default conversationSlice.reducer;

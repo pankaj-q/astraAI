@@ -4,20 +4,64 @@ import InputMessage from "./InputMessage.jsx";
 import ArtifactArea from "./ArtifactArea.jsx";
 import sendMessage from "../features/sendMessage.js";
 import { createConversation } from "../features/createConversation.js";
+import { updateConversation } from "../features/updateConversation.js";
+import getMessage from "../features/getMessage.js";
 
 import { useDispatch, useSelector } from "react-redux";
-import { addMessage } from "../pages/redux/messageSlice.js";
-import { setSelectedConversation } from "../pages/redux/conversationSlice.js";
-import { useState } from "react";
+import { addMessage, setMessage } from "../pages/redux/messageSlice.js";
+import {
+  setSelectedConversation,
+  addConversation,
+  setConversation,
+} from "../pages/redux/conversationSlice.js";
+import { useState, useEffect, useRef } from "react";
 
 function ChatArea() {
-  const { selectedConversation } = useSelector((state) => state.conversations);
+  const { selectedConversation, conversations } = useSelector(
+    (state) => state.conversations,
+  );
 
   const dispatch = useDispatch();
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [artifact, setArtifact] = useState(null);
+
+  const isNewConversationRef = useRef(false);
+
+  // Load messages whenever the selected conversation changes.
+  useEffect(() => {
+    // Skip the fetch for a conversation we just created in handleSendMessage,
+    // since its messages are already managed optimistically.
+    if (isNewConversationRef.current) {
+      isNewConversationRef.current = false;
+      return;
+    }
+
+    const id = selectedConversation?._id || selectedConversation?.id;
+    if (!id) {
+      dispatch(setMessage([]));
+      return;
+    }
+
+    let cancelled = false;
+    (async () => {
+      try {
+        const data = await getMessage(id);
+        if (cancelled) return;
+        const msgs = Array.isArray(data?.message)
+          ? data.message
+          : data?.messages || [];
+        dispatch(setMessage(msgs.slice().reverse()));
+      } catch (err) {
+        console.error("Failed to load messages:", err);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [selectedConversation?._id, selectedConversation?.id]);
 
   const handleSendMessage = async (text) => {
     if (!text.trim() || loading) return;
@@ -31,16 +75,43 @@ function ChatArea() {
 
     try {
       let conversation = selectedConversation;
+      const title = text.trim().slice(0, 40);
+
       // Auto-create conversation if none selected
-      if (!conversation?._id) {
+      if (!conversation?._id && !conversation?.id) {
         const conv = await createConversation();
-        if (!conv?._id) throw new Error("Failed to create conversation");
+        if (!conv?._id && !conv?.id) throw new Error("Failed to create conversation");
+        conv.title = title || conv.title || "New chat";
+        isNewConversationRef.current = true;
+        dispatch(addConversation(conv));
         dispatch(setSelectedConversation(conv));
         conversation = conv;
+
+        // Persist the generated title (best effort).
+        (conv._id || conv.id) &&
+          updateConversation(conv._id || conv.id, conv.title).catch(() => {});
+      } else {
+        // If the selected conversation still has a default title, name it
+        // from the first prompt.
+        const currentTitle = (conversation.title || "").trim().toLowerCase();
+        if (!currentTitle || currentTitle === "new chat" || currentTitle === "newchat") {
+          const updated = { ...conversation, title };
+          dispatch(setSelectedConversation(updated));
+          const updatedList = (conversations || []).map((c) =>
+            (c._id || c.id) === (conversation._id || conversation.id)
+              ? { ...c, title }
+              : c,
+          );
+          dispatch(setConversation(updatedList));
+          updateConversation(conversation._id || conversation.id, title).catch(
+            () => {},
+          );
+        }
       }
 
+      const conversationId = conversation._id || conversation.id;
       const data = await sendMessage({
-        conversationId: conversation._id,
+        conversationId,
         prompt: text,
       });
 
@@ -81,4 +152,3 @@ function ChatArea() {
 }
 
 export default ChatArea;
-
