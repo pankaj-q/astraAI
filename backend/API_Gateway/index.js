@@ -12,6 +12,12 @@ import morgan from 'morgan';
 const PORT = process.env.PORT
 const app = express();
 
+app.use((req, res, next) => {
+  console.log("REQUEST:", req.method, req.originalUrl);
+  console.log("USER-AGENT:", req.headers["user-agent"]);
+  next();
+});
+
 app.use(morgan("dev"));
 
 app.use(
@@ -28,11 +34,16 @@ app.use("/api/chat",protect,proxyHeader(process.env.CHAT_SERVICE));
 app.use("/api/agent", protect, proxy(process.env.AGENT_SERVICE));
 app.get('/api/me', protect,getCurrentUser)
 
+app.get("/health", (req, res) => {
+  res.status(200).json({ status: "OK" });
+});
+
 app.get('/', (req, res)=> {
     res.json({
         message:"API gateway is running"
     })
 })
+
 
 
 app.listen(PORT,() => {
