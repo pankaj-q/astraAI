@@ -145,12 +145,13 @@ function SideArea() {
         </button>
 
         {/* Search */}
+        {!searchOpen && (
         <button
           className={`mt-2.5 flex h-10 w-full items-center rounded-xl border border-transparent text-[#858990] transition-all duration-200 hover:border-[#25282D] hover:bg-[#131518] hover:text-white ${
             collapsed ? "justify-center px-0" : "gap-3 px-3"
           }`}
           title="Search chats"
-          onClick={() => setSearchOpen((v) => !v)}
+          onClick={() => setSearchOpen(true)}
         >
           <Search size={17} />
 
@@ -164,14 +165,18 @@ function SideArea() {
             </>
           )}
         </button>
+        )}
 
-        {!collapsed && searchOpen && (
+        {searchOpen && (
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search conversations..."
-            className="mt-2 w-full rounded-xl border border-[#30343A] bg-[#111316] px-3 py-2 text-[13px] text-[#E8E9EB] outline-none placeholder:text-[#686D75]"
+            onBlur={() => {
+              if (!searchQuery.trim()) setSearchOpen(false);
+            }}
+            placeholder="Search chats..."
+            className="mt-2.5 w-full rounded-xl border border-[#30343A] bg-[#111316] px-3 py-2 text-[13px] text-[#E8E9EB] outline-none placeholder:text-[#686D75]"
             autoFocus
           />
         )}
