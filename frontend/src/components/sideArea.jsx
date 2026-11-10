@@ -15,11 +15,9 @@ import {
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getConversations } from "../features/getCoversations.js";
-import {createConversation } from "../features/createConversation.js";
 import { deleteConversation } from "../features/deleteConversation.js";
 import {
   setConversation,
-  addConversation,
   setSelectedConversation,
   removeConversation,
 } from "../pages/redux/conversationSlice.js";
@@ -29,9 +27,17 @@ function SideArea() {
   const dispatch = useDispatch();
 //   const [imageError, setImageError] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchOpen, setSearchOpen] = useState(false);
    const { conversations, selectedConversation } = useSelector(
      (state) => state.conversations,
    );
+
+  const filteredConversations = (conversations || []).filter((conversation) =>
+    (conversation.title || "")
+      .toLowerCase()
+      .includes(searchQuery.trim().toLowerCase()),
+  );
   const {userData} = useSelector((state) => state.user);
 
   useEffect(() => {
@@ -47,20 +53,8 @@ function SideArea() {
     getConv();
   }, [userData?._id]);
 
-  const handleConversatoin = async()=> {
-     try {
-         const data = await createConversation()
-         const conversation = data?.conversation || data;
-
-         if(!conversation?._id && !conversation?.id){
-          console.error("Invalid conversation rturned:", data)
-          return;
-         }
-         dispatch(addConversation(conversation))
-         dispatch(setSelectedConversation(conversation))
-     } catch (error) {
-        console.error("failed to create conversation", error)
-     };
+  const handleConversatoin = () => {
+    dispatch(setSelectedConversation(null));
   }
 
   const handleDeleteConversation = async (e, conversation) => {
@@ -156,6 +150,7 @@ function SideArea() {
             collapsed ? "justify-center px-0" : "gap-3 px-3"
           }`}
           title="Search chats"
+          onClick={() => setSearchOpen((v) => !v)}
         >
           <Search size={17} />
 
@@ -169,6 +164,17 @@ function SideArea() {
             </>
           )}
         </button>
+
+        {!collapsed && searchOpen && (
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search conversations..."
+            className="mt-2 w-full rounded-xl border border-[#30343A] bg-[#111316] px-3 py-2 text-[13px] text-[#E8E9EB] outline-none placeholder:text-[#686D75]"
+            autoFocus
+          />
+        )}
       </div>
 
       {/* =====================================================
@@ -196,8 +202,8 @@ function SideArea() {
 
         {/* CONVERSATION LIST */}
         <div className="space-y-1">
-          {Array.isArray(conversations) && conversations.length > 0 ? (
-            conversations.map((conversation) => {
+          {Array.isArray(filteredConversations) && filteredConversations.length > 0 ? (
+            filteredConversations.map((conversation) => {
               const conversationId = conversation._id || conversation.id;
 
               const isSelected =
