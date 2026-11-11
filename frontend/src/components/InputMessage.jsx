@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Send, Paperclip, Mic } from "lucide-react";
+import { Send, Paperclip, Mic, Zap, MessageSquare, Code2, FileText, Presentation, ImageIcon, Globe } from "lucide-react";
 
 function InputMessage({ onSend, loading = false }) {
   const [value, setValue] = useState("");
@@ -14,12 +14,55 @@ function InputMessage({ onSend, loading = false }) {
 
     onSend(text);
     setValue("");
-  };
+  }
+  const agents = [
+    {
+      id: "auto",
+      icon: Zap,
+      leble: "Auto",
+    },
+    {
+      id: "chat",
+      icon: MessageSquare,
+      leble: "Chat",
+    },
+    {
+      id: "coding",
+      icon: Code2,
+      leble: "Coding",
+    },
+    {
+      id: "pdf",
+      icon: FileText,
+      leble: "PDF",
+    },
+    {
+      id: "ppt",
+      icon: Presentation,
+      leble: "PPT",
+    },
+    {
+      id: "image",
+      icon: ImageIcon,
+      leble: "Image",
+    },
+    {
+      id: "search",
+      icon: Globe,
+      leble: "Search",
+    },
+  ];
+  
 
   return (
     <div className="w-full bg-[#15171A] px-4 pb-5 pt-3 sm:px-6">
       <form onSubmit={handleSubmit} className="mx-auto w-full max-w-4xl">
         <div className="rounded-2xl border border-[#363A40] bg-[#111316]">
+          <div>
+            {agents.map((agent) => {
+               
+            })}
+          </div>
           <textarea
             id="message"
             name="message"
