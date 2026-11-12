@@ -1,6 +1,13 @@
 import { getModel } from "../config/llmModels.js"
 
 export const router = async(state) => {
+//    if(state.agent && state.agent!=="auto"){
+//       return{
+//       ...state,
+//       agent:state.agent,
+//    }
+// }
+
    const llm = getModel("router");
    const prompt = `You are the ROUTER of a multi-agent AI system astraAI.
 
@@ -110,7 +117,6 @@ Return ONLY the JSON object.
 user query: ${state.prompt}`
 
 const response = await llm.invoke(prompt)
-console.log(response)
 return {
     ...state,
     agent:response.content
