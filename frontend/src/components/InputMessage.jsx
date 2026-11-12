@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { Send, Paperclip, Mic, Zap, MessageSquare, Code2, FileText, Presentation, ImageIcon, Globe } from "lucide-react";
+import { Send, Paperclip, Mic, Zap, MessageSquare, Code2, FileText, Presentation, ImageIcon, Globe, ChevronDown } from "lucide-react";
 
 function InputMessage({ onSend, loading = false }) {
   const [value, setValue] = useState("");
   const[selectedAgent, setSelectedAgent] = useState("auto");
+  const [agentMenuOpen, setAgentMenuOpen] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -59,27 +60,7 @@ function InputMessage({ onSend, loading = false }) {
     <div className="w-full bg-[#15171A] px-4 pb-5 pt-3 sm:px-6">
       <form onSubmit={handleSubmit} className="mx-auto w-full max-w-4xl">
         <div className="rounded-2xl border border-[#363A40] bg-[#111316]">
-          <div className="flex flex-wrap items-center gap-2 px-3 pt-3">
-            {agents.map((agent) => {
-                const isActive = selectedAgent === agent.id;
-                const Icon = agent.icon;
-                return (
-                  <button
-                    key={agent.id}
-                    type="button"
-                    onClick={() => setSelectedAgent(agent.id)}
-                    className={`flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs transition-all ${
-                      isActive
-                        ? "border-[#A78BFA] bg-[#A78BFA]/10 text-[#A78BFA]"
-                        : "border-[#30343A] text-[#858990] hover:border-[#3A3D42] hover:text-[#E8E9EB]"
-                    }`}
-                  >
-                    <Icon size={13} strokeWidth={2} />
-                    <span>{agent.lable}</span>
-                  </button>
-                );
-            })}
-          </div>
+
           <textarea
             id="message"
             name="message"
@@ -98,13 +79,61 @@ function InputMessage({ onSend, loading = false }) {
           />
 
           <div className="flex items-center justify-between px-3 pb-3">
-            <button
-              type="button"
-              aria-label="Attach file"
-              className="flex h-9 w-9 items-center justify-center rounded-xl text-[#858A93] hover:bg-[#25282E] hover:text-[#E8E9EB]"
-            >
-              <Paperclip size={18} strokeWidth={1.8} />
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                aria-label="Attach file"
+                className="flex h-9 w-9 items-center justify-center rounded-xl text-[#858A93] hover:bg-[#25282E] hover:text-[#E8E9EB]"
+              >
+                <Paperclip size={18} strokeWidth={1.8} />
+              </button>
+
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => setAgentMenuOpen((v) => !v)}
+                  className="flex h-9 items-center gap-1.5 rounded-xl border border-[#30343A] px-2.5 text-xs text-[#858A93] hover:bg-[#25282E] hover:text-[#E8E9EB]"
+                >
+                  {(() => {
+                    const agent = agents.find((a) => a.id === selectedAgent) || agents[0];
+                    const Icon = agent.icon;
+                    return (
+                      <>
+                        <Icon size={14} strokeWidth={2} />
+                        <span>{agent.lable}</span>
+                      </>
+                    );
+                  })()}
+                  <ChevronDown size={13} strokeWidth={2} />
+                </button>
+
+                {agentMenuOpen && (
+                  <div className="absolute bottom-11 left-0 z-10 min-w-[130px] rounded-xl border border-[#30343A] bg-[#111316] py-1 shadow-lg">
+                    {agents.map((agent) => {
+                      const Icon = agent.icon;
+                      return (
+                        <button
+                          key={agent.id}
+                          type="button"
+                          onClick={() => {
+                            setSelectedAgent(agent.id);
+                            setAgentMenuOpen(false);
+                          }}
+                          className={`flex w-full items-center gap-2 px-3 py-2 text-xs transition-colors hover:bg-[#25282E] ${
+                            selectedAgent === agent.id
+                              ? "text-[#A78BFA]"
+                              : "text-[#858A93]"
+                          }`}
+                        >
+                          <Icon size={13} strokeWidth={2} />
+                          <span>{agent.lable}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            </div>
 
             <div className="flex items-center gap-2">
               <button
