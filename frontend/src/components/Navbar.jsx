@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 
 function Navbar() {
   const { selectedConversation } = useSelector((state) => state.conversations);
+  const { messages = [] } = useSelector((state) => state.message);
 
   const title = selectedConversation?.title?.trim() || "New chat";
 
@@ -14,10 +15,13 @@ function Navbar() {
       </div>
 
       {/* Conversation Title */}
-      <div className="ml-3 min-w-0">
+      <div className="ml-3 flex min-w-0 items-center gap-2">
         <p className="max-w-[500px] truncate text-[14px] font-medium text-[#E8E9EB]">
           {title}
         </p>
+        <span className="shrink-0 rounded-full border border-[#30343A] bg-[#111316] px-2 py-0.5 text-[11px] text-[#858990]">
+          {messages.length}
+        </span>
       </div>
     </nav>
   );
