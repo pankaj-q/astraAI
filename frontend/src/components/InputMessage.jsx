@@ -3,6 +3,7 @@ import { Send, Paperclip, Mic, Zap, MessageSquare, Code2, FileText, Presentation
 
 function InputMessage({ onSend, loading = false }) {
   const [value, setValue] = useState("");
+  const[selectedAgent, setSelectedAgent] = useState("auto");
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -19,37 +20,37 @@ function InputMessage({ onSend, loading = false }) {
     {
       id: "auto",
       icon: Zap,
-      leble: "Auto",
+      lable: "Auto",
     },
     {
       id: "chat",
       icon: MessageSquare,
-      leble: "Chat",
+      lable: "Chat",
     },
     {
       id: "coding",
       icon: Code2,
-      leble: "Coding",
+      lable: "Coding",
     },
     {
       id: "pdf",
       icon: FileText,
-      leble: "PDF",
+      lable: "PDF",
     },
     {
       id: "ppt",
       icon: Presentation,
-      leble: "PPT",
+      lable: "PPT",
     },
     {
       id: "image",
       icon: ImageIcon,
-      leble: "Image",
+      lable: "Image",
     },
     {
       id: "search",
       icon: Globe,
-      leble: "Search",
+      lable: "Search",
     },
   ];
   
@@ -58,9 +59,25 @@ function InputMessage({ onSend, loading = false }) {
     <div className="w-full bg-[#15171A] px-4 pb-5 pt-3 sm:px-6">
       <form onSubmit={handleSubmit} className="mx-auto w-full max-w-4xl">
         <div className="rounded-2xl border border-[#363A40] bg-[#111316]">
-          <div>
+          <div className="flex flex-wrap items-center gap-2 px-3 pt-3">
             {agents.map((agent) => {
-               
+                const isActive = selectedAgent === agent.id;
+                const Icon = agent.icon;
+                return (
+                  <button
+                    key={agent.id}
+                    type="button"
+                    onClick={() => setSelectedAgent(agent.id)}
+                    className={`flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs transition-all ${
+                      isActive
+                        ? "border-[#A78BFA] bg-[#A78BFA]/10 text-[#A78BFA]"
+                        : "border-[#30343A] text-[#858990] hover:border-[#3A3D42] hover:text-[#E8E9EB]"
+                    }`}
+                  >
+                    <Icon size={13} strokeWidth={2} />
+                    <span>{agent.lable}</span>
+                  </button>
+                );
             })}
           </div>
           <textarea
