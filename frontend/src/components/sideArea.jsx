@@ -225,7 +225,7 @@ function SideArea() {
                   title={title}
                   role="button"
                   tabIndex={0}
-                  className={`group relative flex w-full cursor-pointer items-center rounded-xl border transition-all duration-200 ${
+                  className={`group relative flex w-[96%] mx-auto cursor-pointer items-center rounded-xl border transition-all duration-200 ${
                     isSelected
                       ? "border-[#3A3D42] bg-[#25282D] text-white"
                       : "border-transparent hover:border-[#292C31] hover:bg-[#15171A]"
@@ -256,7 +256,7 @@ function SideArea() {
                     <>
                       <div className="min-w-0 flex-1 text-left">
                         <p
-                          className={`truncate text-[13px] transition-colors ${
+                          className={`break-words text-[13px] transition-colors ${
                             isSelected
                               ? "font-medium text-white"
                               : "text-[#A7ABB1] group-hover:text-white"
