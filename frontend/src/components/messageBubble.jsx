@@ -1,6 +1,6 @@
 const renderInline = (text) => {
   return text.split(/\n/).map((line, i) => {
-    const chunks = line.split(/(\*\*[^*]+\*\*|`[^`]+`|\[[^\]]+\]\([^)]+\))/);
+    const chunks = line.split(/(\*\*[^*]+\*\*|`[^`]+`|!\[[^\]]*\]\([^)]+\)|\[[^\]]+\]\([^)]+\)|https?:\/\/\S+\.(?:png|jpg|jpeg|gif|webp))/i);
     return (
       <span key={i} className="block">
         {chunks.map((chunk, j) => {
@@ -15,6 +15,29 @@ const renderInline = (text) => {
               </code>
             );
           }
+          const image = chunk.match(/^!\[([^\]]*)\]\((.+)\)$/);
+          if (image) {
+            return (
+              <img
+                key={j}
+                src={image[2]}
+                alt={image[1] || "image"}
+                className="my-2 max-h-72 rounded-lg object-contain"
+              />
+            );
+          }
+
+          if (/^https?:\/\/\S+\.(?:png|jpg|jpeg|gif|webp)$/i.test(chunk)) {
+            return (
+              <img
+                key={j}
+                src={chunk}
+                alt="image"
+                className="my-2 max-h-72 rounded-lg object-contain"
+              />
+            );
+          }
+
           const link = chunk.match(/^\[(.+)\]\((.+)\)$/);
           if (link) {
             return (
