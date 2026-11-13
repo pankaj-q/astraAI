@@ -60,12 +60,17 @@
   width: 100%;
   border-collapse: collapse;
   margin: 0.75rem 0;
+  table-layout: auto;
 }
 
 .markdown-body th,
 .markdown-body td {
   border: 1px solid #252A32;
   padding: 0.5rem 0.75rem;
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  vertical-align: top;
 }
 
 .markdown-body th {
