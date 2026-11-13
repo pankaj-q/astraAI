@@ -20,6 +20,7 @@ function ChatArea() {
   const { selectedConversation, conversations } = useSelector(
     (state) => state.conversations,
   );
+  const { messages = [] } = useSelector((state) => state.message);
 
   const dispatch = useDispatch();
 
@@ -28,6 +29,17 @@ function ChatArea() {
   const [artifact, setArtifact] = useState(null);
 
   const isNewConversationRef = useRef(false);
+  const scrollRef = useRef(null);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (el) {
+      const timer = setTimeout(() => {
+        el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
+      }, 50);
+      return () => clearTimeout(timer);
+    }
+  }, [messages.length, loading]);
 
   // Load messages whenever the selected conversation changes.
   useEffect(() => {
@@ -137,7 +149,7 @@ function ChatArea() {
     <main className="flex h-screen min-w-0 flex-1 flex-col overflow-hidden bg-[#15171A] text-[#E8E9EB]">
       <Navbar />
 
-      <div className="min-h-0 flex-1 overflow-y-auto relative">
+      <div ref={scrollRef} className="min-h-0 flex-1 overflow-y-auto relative">
         {error && (
           <div className="mx-auto w-full max-w-4xl px-4 py-4 text-center">
             <p className="text-sm text-[#F87171]">{error}</p>
