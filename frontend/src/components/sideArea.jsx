@@ -217,13 +217,15 @@ function SideArea() {
               const title = conversation.title?.trim() || "New chat";
 
               return (
-                <button
+                <div
                   key={conversationId}
                   onClick={() =>
                     dispatch(setSelectedConversation(conversation))
                   }
                   title={title}
-                  className={`group relative flex w-full items-center rounded-xl border transition-all duration-200 ${
+                  role="button"
+                  tabIndex={0}
+                  className={`group relative flex w-full cursor-pointer items-center rounded-xl border transition-all duration-200 ${
                     isSelected
                       ? "border-[#3A3D42] bg-[#25282D] text-white"
                       : "border-transparent hover:border-[#292C31] hover:bg-[#15171A]"
@@ -274,7 +276,7 @@ function SideArea() {
                       </button>
                     </>
                   )}
-                </button>
+                </div>
               );
             })
           ) : (

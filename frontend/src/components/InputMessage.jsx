@@ -150,11 +150,7 @@ function InputMessage({ onSend, loading = false }) {
                 aria-label="Send message"
                 className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-xl bg-[#E8E9EB] text-[#111316] disabled:cursor-not-allowed disabled:opacity-30"
               >
-                {loading ? (
-                  <span className="h-4 w-4 animate-spin rounded-full border-2 border-[#111316] border-t-transparent" />
-                ) : (
-                  <Send size={17} strokeWidth={2} />
-                )}
+                <Send size={17} strokeWidth={2} />
               </button>
             </div>
           </div>
