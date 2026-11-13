@@ -6,7 +6,7 @@ import { addMessage } from "../config/memory.js";
 
 const getAgent = async (req, res) => {
   try {
-    const { prompt, conversationId } = req.body;
+    const { prompt, conversationId , agent} = req.body;
      await addMessage(conversationId, "user", prompt);
    
     console.log("Conversation ID:", conversationId);

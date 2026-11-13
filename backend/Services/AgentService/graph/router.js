@@ -1,12 +1,12 @@
 import { getModel } from "../config/llmModels.js"
 
 export const router = async(state) => {
-//    if(state.agent && state.agent!=="auto"){
-//       return{
-//       ...state,
-//       agent:state.agent,
-//    }
-// }
+   if(state.agent && state.agent!=="auto"){
+      return{
+      ...state,
+      agent:state.agent,
+   }
+}
 
    const llm = getModel("router");
    const prompt = `You are the ROUTER of a multi-agent AI system astraAI.
