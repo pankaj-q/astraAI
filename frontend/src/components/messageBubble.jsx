@@ -8,10 +8,10 @@ function messageBubble({ message }) {
   return (
     <div className={`flex ${isUser ? "justify-end" : "justify-start"}`}>
       <div
-        className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm ${
+        className={`max-w-full px-4 py-3 text-sm ${
           isUser
-            ? "rounded-br-md bg-[#292D35] text-[#F3F4F6]"
-            : "rounded-bl-md bg-[#1F2227] border border-[#24272C] text-[#D1D5DB]"
+            ? "w-fit max-w-[85%] rounded-2xl bg-[#292D35] text-[#F3F4F6]"
+            : "w-full rounded-none bg-[#15171A] text-[#D1D5DB]"
         }`}
       >
         <MarkdownRenderer content={content} />
