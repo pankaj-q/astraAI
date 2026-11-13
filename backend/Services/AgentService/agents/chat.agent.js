@@ -6,8 +6,15 @@ export const chatAgent = async(state) => {
    const llm = getModel("Chat");
 
    const history = await getMemory(state.conversationId);
+   const searchContext = state.searchResult?`web search result: ${JSON.strigify(state.searchResults)} answer the user using only above search result`:""
 
-   const systemPrompt = "You are an AstraAI - for helping to get right thought of query"
+   const systemPrompt = `You are an AstraAI - for helping to get right thought of query
+   ${searchContext}
+   if contextSearch exist:
+   - use search result to answer.
+   - do not mention internal tool.`
+
+ 
 
    const messages = [
      new SystemMessage(systemPrompt)

@@ -1,5 +1,5 @@
 import { TavilySearch } from "@langchain/tavily";
-export const tool = new TavilySearch({
+export const searchTool = new TavilySearch({
     maxResults: 5,
     topic: "general",
     includeImages: true,
