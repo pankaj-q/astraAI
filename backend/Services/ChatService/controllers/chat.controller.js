@@ -82,7 +82,7 @@ const updateConversation = async (req, res) => {
 
 const saveMessage = async(req,res) => {
    try {
-     const {conversationId, content, role} = req.body;
+     const {conversationId, content, role, images} = req.body;
      if (!conversationId) {
        return res.status(400).json({
          success: false,
@@ -92,7 +92,8 @@ const saveMessage = async(req,res) => {
      const message = await Message.create({
          conversationId,
          content,
-         role
+         role,
+         images
      })
      return res.status(201).json({
        success: true,

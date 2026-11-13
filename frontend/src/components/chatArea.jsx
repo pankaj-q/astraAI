@@ -63,7 +63,7 @@ function ChatArea() {
     };
   }, [selectedConversation?._id, selectedConversation?.id]);
 
-  const handleSendMessage = async (text) => {
+  const handleSendMessage = async (text, agent = "auto") => {
     if (!text.trim() || loading) return;
 
     setLoading(true);
@@ -110,14 +110,17 @@ function ChatArea() {
       }
 
       const conversationId = conversation._id || conversation.id;
+      const backendAgent = agent === "coding" ? "code" : agent;
       const data = await sendMessage({
         conversationId,
         prompt: text,
+        agent: backendAgent,
       });
 
       const aiMessage = {
         role: "assistant",
         content: data.response,
+        images: data.images || [],
       };
 
       if (data.artifact) setArtifact(data.artifact);

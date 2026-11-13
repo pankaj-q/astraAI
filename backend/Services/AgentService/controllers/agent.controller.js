@@ -19,7 +19,7 @@ const getAgent = async (req, res) => {
     const result = await graph.invoke({
       prompt,
       conversationId,
-      
+      agent,
     });
 
     const response = result.aiResponse;
@@ -28,9 +28,12 @@ const getAgent = async (req, res) => {
     await axios.post(`${process.env.CHAT_SERVICE}/save-message`, {
       conversationId,
       role: "assistant",
-      content: response,
+      content:result.aiResponse,
+      images: result.images
     });
     return res.status(200).json({
+      answer:result.aiResponse,
+      images:result.images,
       success: true,
       message: "chat generate sucessfully",
       response: response,

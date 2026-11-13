@@ -5,6 +5,7 @@ async function sendMessage(payload) {
     const response = await api.post("/api/agent/chat", {
       prompt: payload.prompt,
       conversationId: payload.conversationId,
+      agent: payload.agent,
     });
     return response.data;
   } catch (error) {

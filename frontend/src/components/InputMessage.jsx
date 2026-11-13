@@ -14,7 +14,7 @@ function InputMessage({ onSend, loading = false }) {
     if (!text || loading) return;
     console.log("send message", text);
 
-    onSend(text);
+    onSend(text, selectedAgent);
     setValue("");
   }
   const agents = [

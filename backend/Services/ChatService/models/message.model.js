@@ -14,6 +14,10 @@ const messageSchema = new mongoose.Schema({
         type: String,
         rquried: true,
     },
+    images: {
+        type: [String],
+        default: [],
+    },
     status: {
         type: String, 
         enum: ["pending","completed","failed"],

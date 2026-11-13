@@ -59,6 +59,7 @@ const renderContent = (content) => {
 function messageBubble({ message }) {
   const isUser = message.role === "user";
   const content = message.content || message.message || "";
+  const images = Array.isArray(message.images) ? message.images : [];
 
   return (
     <div className={`flex ${isUser ? "justify-end" : "justify-start"}`}>
@@ -70,7 +71,19 @@ function messageBubble({ message }) {
         }`}
       >
         <markdown>{renderContent(content)}</markdown>
-        
+
+        {images.length > 0 && (
+          <div className="mt-2 flex flex-col gap-2">
+            {images.map((src, idx) => (
+              <img
+                key={idx}
+                src={src}
+                alt={`result-${idx}`}
+                className="max-h-72 rounded-lg object-contain"
+              />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
