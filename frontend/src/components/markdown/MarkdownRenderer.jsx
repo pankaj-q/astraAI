@@ -19,12 +19,14 @@ function MarkdownRenderer({ content }) {
           ol: ({ children }) => <ol className="list-decimal pl-5">{children}</ol>,
           li: ({ children }) => <li className="my-1">{children}</li>,
           code: ({ inline, className, children }) => {
-            if (inline) {
+            const codeText = String(children).replace(/\n$/, "");
+            const isBlock = inline === false || !!className || codeText.includes("\n");
+            if (!isBlock) {
               return <code className="inline-code">{children}</code>;
             }
             const match = /language-(\w+)/.exec(className || "");
             return (
-              <CodeBlock language={match?.[1]} code={String(children).replace(/\n$/, "")} />
+              <CodeBlock language={match?.[1]} code={codeText} />
             );
           },
           pre: ({ children }) => <>{children}</>,
