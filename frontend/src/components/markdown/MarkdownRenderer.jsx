@@ -18,6 +18,9 @@ function MarkdownRenderer({ content }) {
         components={{
           a: MarkdownLink,
           table: MarkdownTable,
+          ul: ({ children }) => <ul className="list-disc pl-5">{children}</ul>,
+          ol: ({ children }) => <ol className="list-decimal pl-5">{children}</ol>,
+          li: ({ children }) => <li className="my-1">{children}</li>,
           code: ({ inline, className, children }) => {
             if (inline) {
               return <code className="inline-code">{children}</code>;
