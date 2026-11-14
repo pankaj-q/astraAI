@@ -117,10 +117,18 @@ Return ONLY the JSON object.
 user query: ${state.prompt}`
 
 const response = await llm.invoke(prompt)
+const raw = response.content.trim().toLowerCase();
+const agentMap = {
+  "chatagent": "chat",
+  "searchagent": "search",
+  "codingagent": "code",
+  "pdfagent": "pdf",
+  "pptagent": "ppt",
+  "imageagent": "image",
+};
+const mapped = agentMap[raw] || raw;
 return {
     ...state,
-    agent:response.content
-          .trim()
-          .toLowerCase()
+    agent: mapped
    }
 } 

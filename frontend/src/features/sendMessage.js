@@ -2,6 +2,7 @@ import api from '../utils/axios.js'
 
 async function sendMessage(payload) {
   try {
+
     const response = await api.post("/api/agent/chat", {
       prompt: payload.prompt,
       conversationId: payload.conversationId,

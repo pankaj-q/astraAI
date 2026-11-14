@@ -7,6 +7,7 @@ import "./markdown.css";
 import CodeBlock from "./CodeBlock.jsx";
 import MarkdownTable from "./MarkdownTable.jsx";
 import MarkdownLink from "./MarkdownLink.jsx";
+import ZoomableImage from "./ZoomableImage.jsx";
 
 function MarkdownRenderer({ content }) {
   return (
@@ -27,7 +28,7 @@ function MarkdownRenderer({ content }) {
           },
           pre: ({ children }) => <>{children}</>,
           img: ({ src, alt }) => (
-            <img src={src} alt={alt || "image"} className="my-2 max-h-72 rounded-lg object-contain" />
+            <ZoomableImage src={src} alt={alt || "image"} />
           ),
         }}
       >

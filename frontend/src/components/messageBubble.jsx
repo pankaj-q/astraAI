@@ -1,4 +1,5 @@
 import MarkdownRenderer from "./markdown/MarkdownRenderer.jsx";
+import ZoomableImage from "./markdown/ZoomableImage.jsx";
 
 function messageBubble({ message }) {
   const isUser = message.role === "user";
@@ -19,12 +20,7 @@ function messageBubble({ message }) {
         {images.length > 0 && (
           <div className="mt-2 flex flex-col gap-2">
             {images.map((src, idx) => (
-              <img
-                key={idx}
-                src={src}
-                alt={`result-${idx}`}
-                className="max-h-72 rounded-lg object-contain"
-              />
+              <ZoomableImage key={idx} src={src} alt={`result-${idx}`} />
             ))}
           </div>
         )}

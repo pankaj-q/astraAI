@@ -6,7 +6,7 @@ export const chatAgent = async(state) => {
    const llm = getModel("Chat");
 
    const history = await getMemory(state.conversationId);
-   const searchContext = state.searchResult?`web search result: ${JSON.strigify(state.searchResults)} answer the user using only above search result`:""
+   const searchContext = state.searchResults ? `Web search results: ${JSON.stringify(state.searchResults)}. Answer the user using these search results and include relevant image URLs and source links when available.` : ""
 
    const systemPrompt = `You are AstraAI. Help the user with clear, readable answers. Use paragraphs and bullet lists. Do not use tables unless the user explicitly asks or the data is genuinely tabular. Avoid unnecessary formatting or markdown overload.
    ${searchContext}
