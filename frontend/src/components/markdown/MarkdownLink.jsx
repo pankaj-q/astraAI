@@ -1,3 +1,5 @@
+import { ExternalLink } from "lucide-react";
+
 function MarkdownLink({ href, children, ...props }) {
   const isExternal = /^https?:\/\//.test(href || "");
 
@@ -6,10 +8,11 @@ function MarkdownLink({ href, children, ...props }) {
       href={href}
       target={isExternal ? "_blank" : undefined}
       rel={isExternal ? "noopener noreferrer" : undefined}
-      className="text-[#5B8CFF] hover:underline break-all"
+      className="inline-flex items-center gap-1 text-[#5B8CFF] hover:underline break-all"
       {...props}
     >
       {children}
+      <ExternalLink size={12} strokeWidth={2} />
     </a>
   );
 }
