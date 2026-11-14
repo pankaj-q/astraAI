@@ -20,7 +20,7 @@ function CodeBlock({ language, code }) {
   return (
     <div className="my-3 overflow-hidden rounded-lg border border-[#252A32] bg-[#0D1117]">
       <div className="flex items-center justify-between border-b border-[#252A32] px-3 py-2">
-        <span className="text-xs font-medium text-[#A7ABB1]">{language || "code"}</span>
+        <span className="text-xs font-medium text-[#A7ABB1]">{language && language !== "text" ? language : ""}</span>
         <button
           type="button"
           onClick={handleCopy}
