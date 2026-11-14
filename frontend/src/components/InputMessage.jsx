@@ -1,10 +1,21 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Send, Paperclip, Mic, Zap, MessageSquare, Code2, FileText, Presentation, ImageIcon, Globe, ChevronDown } from "lucide-react";
 
 function InputMessage({ onSend, loading = false }) {
   const [value, setValue] = useState("");
   const[selectedAgent, setSelectedAgent] = useState("auto");
   const [agentMenuOpen, setAgentMenuOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setAgentMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -88,7 +99,7 @@ function InputMessage({ onSend, loading = false }) {
                 <Paperclip size={18} strokeWidth={1.8} />
               </button>
 
-              <div className="relative">
+              <div className="relative" ref={dropdownRef}>
                 <button
                   type="button"
                   onClick={() => setAgentMenuOpen((v) => !v)}
