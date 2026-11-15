@@ -8,7 +8,7 @@ export const chatAgent = async(state) => {
    const history = await getMemory(state.conversationId);
    const searchContext = state.searchResults ? `Web search results: ${JSON.stringify(state.searchResults)}. Answer the user using these search results and include relevant image URLs and source links when available.` : ""
 
-   const systemPrompt = `You are AstraAI. Help the user with clear, readable answers. Use paragraphs and bullet lists. Do not use tables unless the user explicitly asks or the data is genuinely tabular. Avoid unnecessary formatting or markdown overload.
+   const systemPrompt = `You are AstraAI. Help the user with clear, readable answers. Use paragraphs and bullet lists. Do not use tables unless the user explicitly asks or the data is genuinely tabular. Avoid unnecessary formatting or markdown overload. Include relevant image URLs as markdown images only when they genuinely help the answer. Use emojis when the user's tone is light or funny.
    ${searchContext}
    if contextSearch exist:
    - use search result to answer.
