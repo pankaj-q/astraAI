@@ -2,7 +2,7 @@ import { useSelector } from "react-redux";
 import { Sparkles, MessageCircle } from "lucide-react";
 import MessageBubble from "./messageBubble.jsx";
 
-function MessageList() {
+function MessageList({ loading = false }) {
   const { messages = [] } = useSelector((state) => state.message);
 
   const showWelcome = messages.length === 0;
@@ -36,6 +36,12 @@ function MessageList() {
               <MessageBubble message={msg} />
             </div>
           ))}
+
+          {loading && (
+            <div className="px-4 py-2 text-sm font-medium text-[#5B8CFF] animate-pulse">
+              Searching..
+            </div>
+          )}
         </div>
       )}
     </div>

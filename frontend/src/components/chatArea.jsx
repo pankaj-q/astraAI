@@ -155,12 +155,7 @@ function ChatArea() {
             <p className="text-sm text-[#F87171]">{error}</p>
           </div>
         )}
-        <MessageList />
-        {loading && (
-          <div className="mx-auto w-full max-w-4xl px-4 py-2 text-sm font-medium text-[#5B8CFF] animate-pulse">
-            Searching..
-          </div>
-        )}
+        <MessageList loading={loading} />
         <ArtifactArea artifact={artifact} onClose={() => setArtifact(null)} />
       </div>
 
