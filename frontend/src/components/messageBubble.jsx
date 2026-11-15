@@ -18,7 +18,7 @@ function messageBubble({ message }) {
         <MarkdownRenderer content={content} />
 
         {images.length > 0 && (
-          <div className="mt-2 flex flex-col gap-2">
+          <div className="mt-2 flex flex-row flex-wrap gap-2">
             {images.map((src, idx) => (
               <ZoomableImage key={idx} src={src} alt={`result-${idx}`} />
             ))}

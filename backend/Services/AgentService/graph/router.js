@@ -116,8 +116,18 @@ The confidence value must be between 0 and 1.
 Return ONLY the JSON object.
 user query: ${state.prompt}`
 
-const response = await llm.invoke(prompt)
-const raw = response.content.trim().toLowerCase();
+const response = await llm.invoke(prompt);
+let raw = response.content.trim().toLowerCase();
+// The router LLM is instructed to return JSON; extract the agent field.
+try {
+  const jsonMatch = raw.match(/\{[\s\S]*\}/);
+  if (jsonMatch) {
+    const parsed = JSON.parse(jsonMatch[0]);
+    if (parsed.agent) raw = String(parsed.agent).toLowerCase();
+  }
+} catch (e) {
+  // fall back to raw text
+}
 const agentMap = {
   "chatagent": "chat",
   "searchagent": "search",
@@ -125,6 +135,12 @@ const agentMap = {
   "pdfagent": "pdf",
   "pptagent": "ppt",
   "imageagent": "image",
+  "chat": "chat",
+  "search": "search",
+  "code": "code",
+  "pdf": "pdf",
+  "ppt": "ppt",
+  "image": "image",
 };
 const mapped = agentMap[raw] || raw;
 return {
