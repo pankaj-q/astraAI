@@ -15,11 +15,10 @@ export const codingAgent = async (params) => {
        DOCUMENTATION
 
        User Request:
-       ${state.prompt}
+       ${params.prompt}
     `)
     const intent = intentRes.content
-    if(intent === "CODE_GENERATION"){
-        const prompt = `
+    const prompt = `
 You are AstraAI, an expert Senior Software Engineer and Code Generation Assistant.
 
 Your task is to generate high-quality, clean, maintainable, and production-ready code based on the user's requirements.
@@ -75,8 +74,10 @@ Mention dependencies, installation commands, assumptions, or potential limitatio
 ### USER REQUEST
 ${params.prompt}
 Generate the solution now.`;
-    }
 
   const res = await llm.invoke(prompt);
-  console.log(res.content);
+  return {
+    ...params,
+    aiResponse: res.content
+  };
 };
