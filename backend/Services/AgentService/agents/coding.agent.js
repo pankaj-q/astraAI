@@ -78,6 +78,14 @@ Generate the solution now.`;
   const res = await llm.invoke(prompt);
   return {
     ...params,
-    aiResponse: res.content
+    message: "response generate successfully",
+    aiResponse: res.content,
+    artifacts: [
+        {
+            id:Date.now(),
+            type:"project",
+            files:res.files || []
+        }
+    ]
   };
 };
