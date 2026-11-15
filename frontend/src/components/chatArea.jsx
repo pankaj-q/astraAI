@@ -132,7 +132,6 @@ function ChatArea() {
       const aiMessage = {
         role: "assistant",
         content: data.response,
-        images: data.images || [],
       };
 
       if (data.artifact) setArtifact(data.artifact);
