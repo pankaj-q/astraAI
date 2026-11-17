@@ -37,6 +37,7 @@ const getAgent = async (req, res) => {
       success: true,
       message: "chat generate sucessfully",
       response: response,
+      artifacts:result.artifacts
     });
   } catch (error) {
     return res.status(500).json({

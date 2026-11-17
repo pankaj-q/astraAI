@@ -90,4 +90,27 @@ Generate the solution now.`;
     ]
     }
   }
+  const res = await llm.invoke(`
+    the user request is:
+    ${intent}
+    Return markdonw only:
+    never generate project file:
+    use headings like:
+
+    #Oveview
+    ## Problems
+    ## Improvements
+    ## Reveiw
+    ## Explanation
+    ## Best Practive
+    ## Optimised Code
+
+    user request:
+    ${params.prompt} `)
+    const data = res.content
+    return {
+        ...params,
+        aiReponse:data,
+        artifacts:[]
+    }
 }

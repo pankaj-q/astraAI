@@ -93,7 +93,8 @@ const saveMessage = async(req,res) => {
          conversationId,
          content,
          role,
-         images
+         images,
+         artifacts
      })
      return res.status(201).json({
        success: true,
