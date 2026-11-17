@@ -30,7 +30,7 @@ const getAgent = async (req, res) => {
       role: "assistant",
       content:result?.aiResponse,
       images: result?.images,
-      artifacts:result?.artifacts
+      artifacts:result?.artifacts,  
 
     });
     return res.status(200).json({

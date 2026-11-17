@@ -85,7 +85,8 @@ Generate the solution now.`;
         {
             id:Date.now(),
             type:"project",
-            files:res.files || []
+            files:res.files || [],
+            title:params.prompt
         }
     ]
     }

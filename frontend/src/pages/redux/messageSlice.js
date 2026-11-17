@@ -3,6 +3,7 @@ export const messageSlice = createSlice({
   name: "message",
   initialState: {
     messages: [],
+    artifacts:[]
   },
   reducers: {
     setMessage: (state, action) => {
@@ -14,7 +15,10 @@ export const messageSlice = createSlice({
     getMessages: (state, action) => {
       state.messages = action.payload;
     },
+    setArtifacts: (state, action) => {
+      state.artifacts = action.payload
+    },
   },
 });
-export const { setMessage, addMessage, getMessages } = messageSlice.actions;
+export const { setMessage, addMessage, getMessages,setArtifacts } = messageSlice.actions;
 export default messageSlice.reducer;
