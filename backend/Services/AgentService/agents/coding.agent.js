@@ -18,6 +18,7 @@ export const codingAgent = async (params) => {
        ${params.prompt}
     `)
     const intent = intentRes.content
+    if(intent == "CODE_GENERATION"){
     const prompt = `
 You are AstraAI, an expert Senior Software Engineer and Code Generation Assistant.
 
@@ -87,5 +88,6 @@ Generate the solution now.`;
             files:res.files || []
         }
     ]
-  };
-};
+    }
+  }
+}
