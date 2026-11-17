@@ -1,7 +1,10 @@
 import { useState, useEffect, useRef } from "react";
+import { useDispatch } from "react-redux";
+import { setArtifacts } from "../pages/redux/messageSlice.js";
 import { Send, Paperclip, Mic, Zap, MessageSquare, Code2, FileText, Presentation, ImageIcon, Globe, ChevronDown } from "lucide-react";
 
 function InputMessage({ onSend, loading = false }) {
+  const dispatch = useDispatch();
   const [value, setValue] = useState("");
   const[selectedAgent, setSelectedAgent] = useState("auto");
   const [agentMenuOpen, setAgentMenuOpen] = useState(false);
@@ -25,6 +28,7 @@ function InputMessage({ onSend, loading = false }) {
     if (!text || loading) return;
     console.log("send message", text);
 
+    dispatch(setArtifacts([]));
     onSend(text, selectedAgent);
     setValue("");
   }

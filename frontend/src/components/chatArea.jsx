@@ -8,7 +8,7 @@ import { updateConversation } from "../features/updateConversation.js";
 import getMessage from "../features/getMessage.js";
 
 import { useDispatch, useSelector } from "react-redux";
-import { addMessage, setMessage } from "../pages/redux/messageSlice.js";
+import { addMessage, setMessage, setArtifacts } from "../pages/redux/messageSlice.js";
 import {
   setSelectedConversation,
   addConversation,
@@ -134,7 +134,12 @@ function ChatArea() {
         content: data.response,
       };
 
-      if (data.artifact) setArtifact(data.artifact);
+      if (data.artifacts?.length) {
+        dispatch(setArtifacts(data.artifacts));
+        setArtifact(data.artifacts[0]);
+      } else if (data.artifact) {
+        setArtifact(data.artifact);
+      }
       dispatch(addMessage(aiMessage));
     } catch (err) {
       console.error("Message error:", err);
