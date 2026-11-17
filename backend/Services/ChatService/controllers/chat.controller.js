@@ -82,7 +82,7 @@ const updateConversation = async (req, res) => {
 
 const saveMessage = async(req,res) => {
    try {
-     const {conversationId, content, role, images} = req.body;
+     const {conversationId, content, role, images,artifacts} = req.body;
      if (!conversationId) {
        return res.status(400).json({
          success: false,
