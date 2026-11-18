@@ -46,7 +46,6 @@ function Home() {
       <ArtifactArea
         key={artifact?.id ?? artifact?.title ?? "artifact"}
         artifact={artifact}
-        onClose={() => setArtifact(null)}
       />
      
       {!userData && (

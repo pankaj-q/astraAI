@@ -1,9 +1,9 @@
 import { useState, useEffect, useCallback } from "react";
 import {
-  X,
   Copy,
   Download,
   Code2,
+  Eye,
   FileText,
   Image as ImageIcon,
   Table2,
@@ -26,9 +26,10 @@ const artifactMeta = {
   presentation: { label: "Presentation", icon: Presentation },
 };
 
-function ArtifactArea({ artifact, onClose }) {
+function ArtifactArea({ artifact }) {
   const [copied, setCopied] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
+  const [view, setView] = useState("code");
   const [width, setWidth] = useState(440);
   const [dragging, setDragging] = useState(false);
 
@@ -86,6 +87,104 @@ function ArtifactArea({ artifact, onClose }) {
     URL.revokeObjectURL(url);
   };
 
+  const contentText =
+    typeof artifact.content === "string"
+      ? artifact.content
+      : JSON.stringify(artifact.content, null, 2) || "";
+
+  // Pull fenced code blocks out of an agent reply so the "Code" tab shows
+  // just the code, while "Preview" renders the full formatted answer.
+  const extractCode = (text) => {
+    if (typeof text !== "string") return "";
+    const blocks = [...text.matchAll(/```[a-zA-Z0-9+#_.-]*\n([\s\S]*?)```/g)].map(
+      (m) => m[1],
+    );
+    return blocks.length ? blocks.join("\n\n") : text;
+  };
+
+  const centered = (children) => (
+    <div className="flex flex-1 items-center justify-center p-6 text-center">
+      {children}
+    </div>
+  );
+
+  const renderImage = () => (
+    <div className="flex flex-1 items-center justify-center overflow-auto p-4">
+      <img
+        src={artifact.content || artifact.images?.[0]}
+        alt={artifact.title || "Artifact"}
+        className="max-h-full max-w-full rounded-lg object-contain"
+      />
+    </div>
+  );
+
+  const renderCodeView = () => {
+    if (artifact.type === "image") return renderImage();
+
+    return (
+      <div className="flex-1 overflow-auto">
+        <SyntaxHighlighter
+          language={artifact.language || "text"}
+          style={vscDarkPlus}
+          customStyle={{
+            margin: 0,
+            background: "transparent",
+            padding: "1rem",
+            fontSize: "0.85rem",
+          }}
+          showLineNumbers
+          wrapLongLines
+        >
+          {artifact.type === "code" ? extractCode(contentText) : contentText}
+        </SyntaxHighlighter>
+      </div>
+    );
+  };
+
+  const renderPreviewView = () => {
+    switch (artifact.type) {
+      case "image":
+        return renderImage();
+
+      case "presentation":
+        return centered(
+          <>
+            <Presentation size={32} className="mb-3 text-[#A7ABB1]" />
+            <p className="text-sm text-[#A7ABB1]">Presentation preview</p>
+            {artifact.slides?.length ? (
+              <div className="mt-4 flex items-center gap-2">
+                <button className="rounded-lg border border-[#252A32] px-2 py-1 text-xs text-[#F3F4F6] hover:bg-[#191D24]">
+                  Prev
+                </button>
+                <span className="text-xs text-[#A7ABB1]">
+                  {artifact.currentSlide || 1} / {artifact.slides.length}
+                </span>
+                <button className="rounded-lg border border-[#252A32] px-2 py-1 text-xs text-[#F3F4F6] hover:bg-[#191D24]">
+                  Next
+                </button>
+              </div>
+            ) : null}
+          </>,
+        );
+
+      case "data":
+        return (
+          <div className="flex-1 overflow-auto p-4">
+            <pre className="whitespace-pre-wrap font-mono text-xs leading-relaxed text-[#F3F4F6]">
+              {contentText}
+            </pre>
+          </div>
+        );
+
+      default:
+        return (
+          <div className="flex-1 overflow-auto p-4">
+            <MarkdownRenderer content={artifact.content || ""} />
+          </div>
+        );
+    }
+  };
+
   const renderBody = () => {
     if (artifact.loading) {
       return (
@@ -122,83 +221,7 @@ function ArtifactArea({ artifact, onClose }) {
       );
     }
 
-    switch (artifact.type) {
-      case "code":
-        return (
-          <div className="flex-1 overflow-auto">
-            <SyntaxHighlighter
-              language={artifact.language || "text"}
-              style={vscDarkPlus}
-              customStyle={{
-                margin: 0,
-                background: "transparent",
-                padding: "1rem",
-                fontSize: "0.85rem",
-              }}
-              showLineNumbers
-              wrapLongLines
-            >
-              {typeof artifact.content === "string"
-                ? artifact.content
-                : JSON.stringify(artifact.content, null, 2)}
-            </SyntaxHighlighter>
-          </div>
-        );
-
-      case "image":
-        return (
-          <div className="flex flex-1 items-center justify-center overflow-auto p-4">
-            <img
-              src={artifact.content || artifact.images?.[0]}
-              alt={artifact.title || "Artifact"}
-              className="max-h-full max-w-full rounded-lg object-contain"
-            />
-          </div>
-        );
-
-      case "data":
-        return (
-          <div className="flex-1 overflow-auto p-4">
-            <pre className="whitespace-pre-wrap font-mono text-xs leading-relaxed text-[#F3F4F6]">
-              {typeof artifact.content === "string"
-                ? artifact.content
-                : JSON.stringify(artifact.content, null, 2)}
-            </pre>
-          </div>
-        );
-
-      case "presentation":
-        return (
-          <div className="flex flex-1 flex-col items-center justify-center gap-4 p-6 text-center">
-            <Presentation size={32} className="text-[#A7ABB1]" />
-            <p className="text-sm text-[#A7ABB1]">Presentation preview</p>
-            {artifact.slides?.length ? (
-              <div className="flex items-center gap-2">
-                <button className="rounded-lg border border-[#252A32] px-2 py-1 text-xs text-[#F3F4F6] hover:bg-[#191D24]">
-                  Prev
-                </button>
-                <span className="text-xs text-[#A7ABB1]">
-                  {artifact.currentSlide || 1} / {artifact.slides.length}
-                </span>
-                <button className="rounded-lg border border-[#252A32] px-2 py-1 text-xs text-[#F3F4F6] hover:bg-[#191D24]">
-                  Next
-                </button>
-              </div>
-            ) : null}
-          </div>
-        );
-
-      case "research":
-      case "markdown":
-      case "document":
-      case "html":
-      default:
-        return (
-          <div className="flex-1 overflow-auto p-4">
-            <MarkdownRenderer content={artifact.content || ""} />
-          </div>
-        );
-    }
+    return view === "preview" ? renderPreviewView() : renderCodeView();
   };
 
   return (
@@ -220,11 +243,19 @@ function ArtifactArea({ artifact, onClose }) {
             onClick={() => setCollapsed(false)}
             aria-label="Open artifact panel"
             title="Open artifact panel"
-            className="flex h-9 w-9 items-center justify-center rounded-lg border border-[#252A32] bg-[#111316] text-[#A7ABB1] transition-colors hover:border-[#3A3D42] hover:bg-[#191D24] hover:text-white"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[#252A32] bg-[#111316] text-[#A7ABB1] transition-colors hover:border-[#3A3D42] hover:bg-[#191D24] hover:text-white"
           >
             <ChevronsLeft size={18} />
           </button>
-          <Icon size={18} className="text-[#A7ABB1]" />
+          <button
+            onClick={() => setCollapsed(false)}
+            title={artifact.title || "Artifact"}
+            className="flex min-h-0 flex-1 items-center justify-center overflow-hidden hover:text-white"
+          >
+            <span className="max-h-[70vh] overflow-hidden text-ellipsis whitespace-nowrap text-xs font-medium text-[#A7ABB1] [writing-mode:vertical-rl] rotate-180">
+              {artifact.title || "Artifact"}
+            </span>
+          </button>
         </div>
       ) : (
         <>
@@ -267,14 +298,6 @@ function ArtifactArea({ artifact, onClose }) {
                 <Download size={16} strokeWidth={2} />
               </button>
               <button
-                onClick={onClose}
-                aria-label="Close artifact panel"
-                title="Close"
-                className="flex h-8 w-8 items-center justify-center rounded-lg text-[#A7ABB1] transition-colors hover:bg-[#191D24] hover:text-white"
-              >
-                <X size={16} strokeWidth={2} />
-              </button>
-              <button
                 onClick={() => setCollapsed(true)}
                 aria-label="Collapse artifact panel"
                 title="Collapse"
@@ -283,6 +306,32 @@ function ArtifactArea({ artifact, onClose }) {
                 <ChevronsRight size={18} />
               </button>
             </div>
+          </div>
+
+          {/* Code / Preview switch */}
+          <div className="flex shrink-0 items-center gap-1 border-b border-[#24272C] bg-[#111316] px-2 py-1.5">
+            <button
+              onClick={() => setView("code")}
+              className={`flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors ${
+                view === "code"
+                  ? "bg-[#191D24] text-[#F3F4F6]"
+                  : "text-[#A7ABB1] hover:text-white"
+              }`}
+            >
+              <Code2 size={14} strokeWidth={2} />
+              Code
+            </button>
+            <button
+              onClick={() => setView("preview")}
+              className={`flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors ${
+                view === "preview"
+                  ? "bg-[#191D24] text-[#F3F4F6]"
+                  : "text-[#A7ABB1] hover:text-white"
+              }`}
+            >
+              <Eye size={14} strokeWidth={2} />
+              Preview
+            </button>
           </div>
 
           <div className="flex min-h-0 flex-1 flex-col overflow-hidden">{renderBody()}</div>
