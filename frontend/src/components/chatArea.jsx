@@ -1,7 +1,6 @@
 import Navbar from "./Navbar.jsx";
 import MessageList from "./MessageList.jsx";
 import InputMessage from "./InputMessage.jsx";
-import ArtifactArea from "./ArtifactArea.jsx";
 import sendMessage from "../features/sendMessage.js";
 import { createConversation } from "../features/createConversation.js";
 import { updateConversation } from "../features/updateConversation.js";
@@ -16,7 +15,7 @@ import {
 } from "../pages/redux/conversationSlice.js";
 import { useState, useEffect, useRef } from "react";
 
-function ChatArea() {
+function ChatArea({ onArtifact }) {
   const { selectedConversation, conversations } = useSelector(
     (state) => state.conversations,
   );
@@ -26,7 +25,6 @@ function ChatArea() {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [artifact, setArtifact] = useState(null);
 
   const isNewConversationRef = useRef(false);
   const scrollRef = useRef(null);
@@ -129,16 +127,21 @@ function ChatArea() {
         agent: backendAgent,
       });
 
+      const hasArtifact = (data.artifacts?.length || data.artifact);
       const aiMessage = {
         role: "assistant",
-        content: data.response,
+        content: hasArtifact
+          ? "Code generated successfully. The generated code is available in the artifact panel on the right."
+          : data.response,
       };
 
       if (data.artifacts?.length) {
         dispatch(setArtifacts(data.artifacts));
-        setArtifact(data.artifacts[0]);
+        onArtifact?.(data.artifacts[0]);
       } else if (data.artifact) {
-        setArtifact(data.artifact);
+        onArtifact?.(data.artifact);
+      } else if (backendAgent === "code" && data.response) {
+        onArtifact?.({ type: "code", title: text, content: data.response });
       }
       dispatch(addMessage(aiMessage));
     } catch (err) {
@@ -160,7 +163,6 @@ function ChatArea() {
           </div>
         )}
         <MessageList loading={loading} />
-        <ArtifactArea artifact={artifact} onClose={() => setArtifact(null)} />
       </div>
 
       <div className="shrink-0 border-t border-[#24272C] bg-[#15171A]">

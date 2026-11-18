@@ -84,8 +84,8 @@ Generate the solution now.`;
     artifacts: [
         {
             id:Date.now(),
-            type:"project",
-            files:res.files || [],
+            type:"code",
+            content: res.content,
             title:params.prompt
         }
     ]

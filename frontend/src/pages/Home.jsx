@@ -5,12 +5,15 @@ import { useDispatch, useSelector } from "react-redux";
 import { setUserData } from "./redux/userSlice.js";
 import SideArea from "../components/sideArea.jsx";
 import ChatArea from "../components/chatArea.jsx";
+import ArtifactArea from "../components/ArtifactArea.jsx";
+import { useState } from "react";
 
 
 
 function Home() {
   const {userData} =useSelector(state=>state.user)
   const dispatch = useDispatch();
+  const [artifact, setArtifact] = useState(null);
 
   const handleLogin = async (token) => {
     try {
@@ -39,7 +42,12 @@ function Home() {
   return (
     <div className="h-screen flex bg-black text-white overflow-hidden">
       <SideArea/>
-      <ChatArea/>
+      <ChatArea onArtifact={setArtifact} />
+      <ArtifactArea
+        key={artifact?.id ?? artifact?.title ?? "artifact"}
+        artifact={artifact}
+        onClose={() => setArtifact(null)}
+      />
      
       {!userData && (
         <div className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-4 bg-black/60 backdrop-blur">
