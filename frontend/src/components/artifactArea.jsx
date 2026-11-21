@@ -13,7 +13,6 @@ import {
 } from "lucide-react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
-import MarkdownRenderer from "./markdown/MarkdownRenderer.jsx";
 
 const artifactMeta = {
   code: { label: "Code", icon: Code2 },
@@ -25,6 +24,100 @@ const artifactMeta = {
   data: { label: "Data", icon: Table2 },
   presentation: { label: "Presentation", icon: Presentation },
 };
+
+const PREVIEW_FILE = /\.(html?|css|m?js|jsx)$/i;
+
+// Preview only makes sense for web output (HTML / CSS / JS).
+function isPreviewArtifact(artifact) {
+  if (!artifact) return false;
+  if (artifact.type === "html") return true;
+
+  const lang = String(artifact.language || "").toLowerCase();
+  if (["html", "css", "javascript", "js", "jsx"].includes(lang)) return true;
+
+  if (
+    Array.isArray(artifact.files) &&
+    artifact.files.some((f) => PREVIEW_FILE.test(f.name || f.path || f.filename || ""))
+  ) {
+    return true;
+  }
+
+  const content = typeof artifact.content === "string" ? artifact.content : "";
+  return (
+    /```\s*(html|css|javascript|js|jsx)\b/i.test(content) ||
+    /<!doctype\s+html|<html[\s>]/i.test(content)
+  );
+}
+
+// Merge the artifact's html/css/js into a single document for the iframe.
+function buildPreviewDocument(artifact) {
+  let html = "";
+  let css = "";
+  let js = "";
+
+  const addFile = (name, code) => {
+    if (!code) return;
+    const n = String(name || "").toLowerCase();
+    if (n.endsWith(".css")) css += `\n${code}`;
+    else if (n.endsWith(".js") || n.endsWith(".mjs") || n.endsWith(".jsx")) js += `\n${code}`;
+    else if (n.endsWith(".html") || n.endsWith(".htm")) html += `\n${code}`;
+  };
+
+  const files = Array.isArray(artifact.files) ? artifact.files : [];
+  files.forEach((f) =>
+    addFile(f.name || f.filename || f.path, f.content ?? f.code ?? ""),
+  );
+
+  if (!files.length) {
+    const content = typeof artifact.content === "string" ? artifact.content : "";
+    const fenced = [
+      ...content.matchAll(/```(html|css|javascript|js|jsx)\s*\n([\s\S]*?)```/gi),
+    ];
+
+    if (fenced.length) {
+      fenced.forEach(([, lang, code]) => {
+        const l = lang.toLowerCase();
+        if (l === "css") css += `\n${code}`;
+        else if (l === "js" || l === "javascript" || l === "jsx") js += `\n${code}`;
+        else html += `\n${code}`;
+      });
+    } else {
+      // The model may have been cut off before closing the fence.
+      const open = content.match(/```(html|css|javascript|js|jsx)\s*\n([\s\S]*)$/i);
+      if (open) {
+        const l = open[1].toLowerCase();
+        if (l === "css") css = open[2];
+        else if (l === "js" || l === "javascript" || l === "jsx") js = open[2];
+        else html = open[2];
+      } else {
+        const lang = String(artifact.language || "").toLowerCase();
+        if (lang === "css") css = content;
+        else if (lang === "js" || lang === "javascript" || lang === "jsx") js = content;
+        else html = content;
+      }
+    }
+  }
+
+  const styleTag = css ? `<style>\n${css}\n</style>` : "";
+  const scriptTag = js ? `<script>\n${js}\n</script>` : "";
+
+  if (/<html[\s>]/i.test(html)) {
+    let doc = html;
+    if (css) {
+      doc = /<\/head>/i.test(html)
+        ? doc.replace(/<\/head>/i, `${styleTag}</head>`)
+        : `${styleTag}${doc}`;
+    }
+    if (js) {
+      doc = /<\/body>/i.test(html)
+        ? doc.replace(/<\/body>/i, `${scriptTag}</body>`)
+        : `${doc}${scriptTag}`;
+    }
+    return doc;
+  }
+
+  return `<!doctype html><html><head><meta charset="utf-8" />${styleTag}</head><body>${html}${scriptTag}</body></html>`;
+}
 
 function ArtifactArea({ artifact }) {
   const [copied, setCopied] = useState(false);
@@ -99,14 +192,15 @@ function ArtifactArea({ artifact }) {
     const blocks = [...text.matchAll(/```[a-zA-Z0-9+#_.-]*\n([\s\S]*?)```/g)].map(
       (m) => m[1],
     );
-    return blocks.length ? blocks.join("\n\n") : text;
+    if (blocks.length) return blocks.join("\n\n");
+    // Fallback for responses cut off before the closing fence.
+    const open = text.match(/```[a-zA-Z0-9+#_.-]*\n([\s\S]*)$/);
+    return open ? open[1] : text;
   };
 
-  const centered = (children) => (
-    <div className="flex flex-1 items-center justify-center p-6 text-center">
-      {children}
-    </div>
-  );
+  const canPreview = isPreviewArtifact(artifact);
+  const previewDoc = canPreview ? buildPreviewDocument(artifact) : "";
+  const activeView = canPreview ? view : "code";
 
   const renderImage = () => (
     <div className="flex flex-1 items-center justify-center overflow-auto p-4">
@@ -141,49 +235,14 @@ function ArtifactArea({ artifact }) {
     );
   };
 
-  const renderPreviewView = () => {
-    switch (artifact.type) {
-      case "image":
-        return renderImage();
-
-      case "presentation":
-        return centered(
-          <>
-            <Presentation size={32} className="mb-3 text-[#A7ABB1]" />
-            <p className="text-sm text-[#A7ABB1]">Presentation preview</p>
-            {artifact.slides?.length ? (
-              <div className="mt-4 flex items-center gap-2">
-                <button className="rounded-lg border border-[#252A32] px-2 py-1 text-xs text-[#F3F4F6] hover:bg-[#191D24]">
-                  Prev
-                </button>
-                <span className="text-xs text-[#A7ABB1]">
-                  {artifact.currentSlide || 1} / {artifact.slides.length}
-                </span>
-                <button className="rounded-lg border border-[#252A32] px-2 py-1 text-xs text-[#F3F4F6] hover:bg-[#191D24]">
-                  Next
-                </button>
-              </div>
-            ) : null}
-          </>,
-        );
-
-      case "data":
-        return (
-          <div className="flex-1 overflow-auto p-4">
-            <pre className="whitespace-pre-wrap font-mono text-xs leading-relaxed text-[#F3F4F6]">
-              {contentText}
-            </pre>
-          </div>
-        );
-
-      default:
-        return (
-          <div className="flex-1 overflow-auto p-4">
-            <MarkdownRenderer content={artifact.content || ""} />
-          </div>
-        );
-    }
-  };
+  const renderPreviewView = () => (
+    <iframe
+      title={artifact.title || "Artifact preview"}
+      srcDoc={previewDoc}
+      sandbox="allow-scripts allow-forms allow-modals allow-popups"
+      className="h-full w-full flex-1 border-0 bg-white"
+    />
+  );
 
   const renderBody = () => {
     if (artifact.loading) {
@@ -221,13 +280,13 @@ function ArtifactArea({ artifact }) {
       );
     }
 
-    return view === "preview" ? renderPreviewView() : renderCodeView();
+    return activeView === "preview" ? renderPreviewView() : renderCodeView();
   };
 
   return (
     <aside
       className="relative flex h-screen shrink-0 flex-col overflow-hidden border-l border-[#24272C] bg-[#14171C] text-[#F3F4F6] transition-[width] duration-300 ease-in-out"
-      style={{ width: collapsed ? 48 : width }}
+      style={{ width: collapsed ? 48 : width, maxWidth: collapsed ? 48 : "65vw" }}
     >
       {/* Resize handle between chat area and artifact area */}
       {!collapsed && (
@@ -313,7 +372,7 @@ function ArtifactArea({ artifact }) {
             <button
               onClick={() => setView("code")}
               className={`flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors ${
-                view === "code"
+                activeView === "code"
                   ? "bg-[#191D24] text-[#F3F4F6]"
                   : "text-[#A7ABB1] hover:text-white"
               }`}
@@ -321,17 +380,19 @@ function ArtifactArea({ artifact }) {
               <Code2 size={14} strokeWidth={2} />
               Code
             </button>
-            <button
-              onClick={() => setView("preview")}
-              className={`flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors ${
-                view === "preview"
-                  ? "bg-[#191D24] text-[#F3F4F6]"
-                  : "text-[#A7ABB1] hover:text-white"
-              }`}
-            >
-              <Eye size={14} strokeWidth={2} />
-              Preview
-            </button>
+            {canPreview && (
+              <button
+                onClick={() => setView("preview")}
+                className={`flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors ${
+                  activeView === "preview"
+                    ? "bg-[#191D24] text-[#F3F4F6]"
+                    : "text-[#A7ABB1] hover:text-white"
+                }`}
+              >
+                <Eye size={14} strokeWidth={2} />
+                Preview
+              </button>
+            )}
           </div>
 
           <div className="flex min-h-0 flex-1 flex-col overflow-hidden">{renderBody()}</div>

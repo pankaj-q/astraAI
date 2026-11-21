@@ -15,6 +15,9 @@ import {
 } from "../pages/redux/conversationSlice.js";
 import { useState, useEffect, useRef } from "react";
 
+const ARTIFACT_MESSAGE =
+  "Code generated successfully. The generated code is available in the artifact panel on the right.";
+
 function ChatArea({ onArtifact }) {
   const { selectedConversation, conversations } = useSelector(
     (state) => state.conversations,
@@ -51,6 +54,7 @@ function ChatArea({ onArtifact }) {
     const id = selectedConversation?._id || selectedConversation?.id;
     if (!id) {
       dispatch(setMessage([]));
+      onArtifact?.(null);
       return;
     }
 
@@ -62,7 +66,17 @@ function ChatArea({ onArtifact }) {
         const msgs = Array.isArray(data?.message)
           ? data.message
           : data?.messages || [];
-        dispatch(setMessage(msgs.slice().reverse()));
+        // Restore the most recent artifact for this conversation.
+        const latestArtifact =
+          msgs.find((m) => m.artifacts?.length)?.artifacts?.[0] || null;
+        onArtifact?.(latestArtifact);
+        // Keep the chat readable: artifact-bearing replies only point at the panel.
+        const normalized = msgs.map((m) =>
+          m.role === "assistant" && m.artifacts?.length
+            ? { ...m, content: ARTIFACT_MESSAGE }
+            : m,
+        );
+        dispatch(setMessage(normalized.slice().reverse()));
       } catch (err) {
         console.error("Failed to load messages:", err);
       }
@@ -71,7 +85,7 @@ function ChatArea({ onArtifact }) {
     return () => {
       cancelled = true;
     };
-  }, [selectedConversation?._id, selectedConversation?.id]);
+  }, [selectedConversation?._id, selectedConversation?.id, onArtifact]);
 
   const handleSendMessage = async (text, agent = "auto") => {
     if (!text.trim() || loading) return;
@@ -130,9 +144,7 @@ function ChatArea({ onArtifact }) {
       const hasArtifact = (data.artifacts?.length || data.artifact);
       const aiMessage = {
         role: "assistant",
-        content: hasArtifact
-          ? "Code generated successfully. The generated code is available in the artifact panel on the right."
-          : data.response,
+        content: hasArtifact ? ARTIFACT_MESSAGE : data.response,
       };
 
       if (data.artifacts?.length) {

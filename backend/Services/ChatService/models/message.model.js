@@ -12,7 +12,9 @@ const artifactSchema = new mongoose.Schema(
   {
     id: Number,
     type: String,
-    title:String,
+    title: String,
+    language: String,
+    content: String,
     files: [fileSchema],
   },
   {
@@ -33,7 +35,10 @@ const messageSchema = new mongoose.Schema({
     content: {
         type: String,
         rquried: true,
-        artifacts:[artifactSchema]
+    },
+    artifacts: {
+        type: [artifactSchema],
+        default: [],
     },
     images: {
         type: [String],
